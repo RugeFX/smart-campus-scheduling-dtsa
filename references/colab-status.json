@@ -1,0 +1,260 @@
+{
+  "sha256": "66982c5fc169d0ca7e4ea3f71f31e141028b4af526f7c69d15fa8adbc9d61201",
+  "modified_time": "2026-10-21T13:06:23.622Z",
+  "operations": {
+    "HashTableChaining.__init__": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableChaining._hash": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableChaining._check_key": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableChaining._find": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableChaining.put": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableChaining.get": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableChaining.contains": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableChaining.delete": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableChaining.items": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableChaining._rehash": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableChaining.__len__": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableChaining.__repr__": {
+      "implemented": true,
+      "cell": 23
+    },
+    "MinHeapPriorityQueue.__init__": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue._check_request": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue._key": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue._less": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue._swap": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue._sift_up": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue._sift_down": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue._heapify": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue.build": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue.push": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue.pop": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue.peek": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue.apply_aging": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue.ordered_entries": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue.validate": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue.__len__": {
+      "implemented": true,
+      "cell": 21
+    },
+    "Trie.__init__": {
+      "implemented": true,
+      "cell": 28
+    },
+    "Trie.insert": {
+      "implemented": true,
+      "cell": 28
+    },
+    "Trie.search": {
+      "implemented": true,
+      "cell": 28
+    },
+    "Trie.starts_with": {
+      "implemented": true,
+      "cell": 28
+    },
+    "Trie.autocomplete": {
+      "implemented": true,
+      "cell": 28
+    },
+    "AVLTree.__init__": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.get_height": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.get_balance": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.update_height": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.rotate_right": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.rotate_left": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.insert": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree._insert": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.in_order_traversal": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree._in_order": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.find_suitable_room": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.check_balance": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree._check_balance": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.delete": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.inorder": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.ceiling_capacity": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.top_k_utilization": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.validate": {
+      "implemented": true,
+      "cell": 32
+    },
+    "optimize_schedule": {
+      "implemented": true,
+      "cell": 34
+    },
+    "merge_equivalent_classes": {
+      "implemented": true,
+      "cell": 38
+    },
+    "update_room_usage": {
+      "implemented": true,
+      "cell": 38
+    },
+    "schedule_across_rooms": {
+      "implemented": true,
+      "cell": 38
+    },
+    "demo_integration": {
+      "implemented": true,
+      "cell": 38
+    },
+    "hubungkan_pencarian_feb": {
+      "implemented": true,
+      "cell": 30
+    }
+  },
+  "flags": {
+    "AKTIFKAN_PENCARIAN_FEB": true,
+    "RUN_TESTS": true,
+    "AGING_STEP_MINUTES": null
+  },
+  "benchmark_ready": true,
+  "test_runners": [
+    "T01",
+    "T02",
+    "T03",
+    "T04",
+    "T05",
+    "T06",
+    "T07",
+    "T08",
+    "T09",
+    "T10",
+    "T11",
+    "T12",
+    "T13",
+    "T14",
+    "T15",
+    "T16",
+    "T17",
+    "T18"
+  ]
+}

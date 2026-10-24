@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.streamlit/secrets.toml
+*.zip
+.DS_Store
+.env
+.env.*
+!.env.example
+*.log
+exports/
+references/lab-audit/
+references/heap-work/*.ipynb
+references/tail-work/*.ipynb
+data/smart_campus_benchmark*

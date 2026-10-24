@@ -1,0 +1,21 @@
+{
+  "retrieved_date": "2026-10-24",
+  "notebook_modified_utc": "2026-10-21T13:06:23.622Z",
+  "files": [
+    {
+      "file": "references/UTS_Group2_Smart_Campus.ipynb",
+      "source": "https://colab.research.google.com/drive/1D0LHKRtp9G-LxFdl0vKPz_Gmcy5VNdS0",
+      "sha256": "66982c5fc169d0ca7e4ea3f71f31e141028b4af526f7c69d15fa8adbc9d61201"
+    },
+    {
+      "file": "data/dataset_jadwal_uts_feb_uph.xlsx",
+      "source": "https://drive.google.com/file/d/14ssmxLs2leJDNAUBvTpuk2ukbxm8b-iP/view",
+      "sha256": "b582b9e371245ca26ed696898603cc6327fb82beacd1c3c8218825ec18b5e534"
+    },
+    {
+      "file": "references/ppt-final-text.md",
+      "source": "https://docs.google.com/presentation/d/1QIxWQcUh7OSqXMv69zOGAhssFwsJgfO8sJu64UTcSPI/edit",
+      "sha256": "854b7c6d0f6bceed6242f8173ecbb6f9eb5d1824ff8a7bed66d79254bcdb6109"
+    }
+  ]
+}
