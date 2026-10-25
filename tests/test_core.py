@@ -29,7 +29,7 @@ def notebook_definitions():
     (heap,['MinHeapPriorityQueue']),
     (trie,['TrieNode','Trie','bilingual_autocomplete']),
     (avl,['AVLNode','AVLTree']),
-    (dp,['optimize_schedule','find_previous_compatible','validate_candidates','explain_dp_table','verify_dp_random_cases']),
+    (dp,['optimize_schedule','optimize_schedule_memo','naive_recursive','chain_requests','compare_dp_methods','find_previous_compatible','validate_candidates','explain_dp_table','verify_dp_random_cases']),
     (hash_table,['HashTableChaining','polynomial_hash']),
     (demo,['build_indexes']),
     (service,['MergedClassRecord','merge_equivalent_classes','update_room_usage','schedule_across_rooms','validate_room_registry','stage_room_updates','commit_room_registry','make_room_registry','touched_regular_slots','simulate_feb_allocation']),
@@ -91,6 +91,27 @@ def test_dp_and_source_contract():
     assert 'flexible_time' not in {f.name for f in fields(ScheduleRequest)}
 
 
+def test_dp_memoization_naive_and_tabulation_agree():
+    from random import Random
+    from campus.generators import generate_requests
+    from campus.dp import optimize_schedule_memo,naive_recursive,chain_requests,compare_dp_methods
+    rng=Random(7)
+    for _ in range(10):
+        sample=generate_requests(rng.randrange(0,16),seed=rng.randrange(1_000_000))
+        expected=dp.optimize_schedule(sample)
+        value,ids,memo_calls=optimize_schedule_memo(sample)
+        naive_value,naive_calls=naive_recursive(sample)
+        assert (value,ids)==expected,'Memoisasi harus identik dengan tabulasi.'
+        assert naive_value==value,'Nilai optimum naif harus sama.'
+        assert memo_calls<=2*len(sample)+1<=naive_calls or not sample
+    chain=chain_requests(11)
+    assert optimize_schedule_memo(chain)[:2]==dp.optimize_schedule(chain)
+    assert naive_recursive(chain)==(5*11,2**12-1),'Rantai kompatibel = 2^(n+1)-1 pemanggilan naif.'
+    assert optimize_schedule_memo([])==(0,[],0) and naive_recursive([])==(0,0)
+    rows=compare_dp_methods()
+    assert len(rows)==9 and all(row['naif_pemanggilan']>=row['memo_pemanggilan'] for row in rows)
+
+
 def test_excel_search_uses_bridge_while_saved_notebook_flag_is_preserved():
     data=load_workbook(ROOT/'data/dataset_jadwal_uts_feb_uph.xlsx')
     assert len(data['display'])==243 and len(data['ingredients']['mata_kuliah'])==122
@@ -102,9 +123,9 @@ def test_excel_search_uses_bridge_while_saved_notebook_flag_is_preserved():
 
 
 def test_plan_has_no_invented_registered_tests():
-    assert set(TEST_RUNNERS)=={f'T{i:02d}' for i in range(1,19)} and RUN_TESTS is True
-    assert len(run_test_plan())==18
-    assert [status for _,status,_ in run_test_plan()]==['LULUS']*18
+    assert set(TEST_RUNNERS)=={f'T{i:02d}' for i in range(1,20)} and RUN_TESTS is True
+    assert len(run_test_plan())==19
+    assert [status for _,status,_ in run_test_plan()]==['LULUS']*19
 
 
 def test_saved_benchmarks_are_verified_against_snapshot():
@@ -115,4 +136,4 @@ def test_saved_benchmarks_are_verified_against_snapshot():
     provenance=json.loads((ROOT/'references/benchmark-provenance.json').read_text())
     assert provenance['notebook_sha256']==STATUS['sha256']
     measured=pd.read_csv(ROOT/'data/colab_benchmarks.csv')
-    assert len(measured)==58 and set(measured['runs'])=={5}
+    assert len(measured)==79 and set(measured['runs'])=={5}

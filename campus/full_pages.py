@@ -186,17 +186,18 @@ def experiments_page(data):
 
 
 def test_panel():
+    total=len(STATUS["test_runners"])
     st.subheader("Pengujian algoritma Colab")
-    st.caption("18 skenario memakai fixture uji terkontrol. Fixture ini terpisah dari data jadwal aplikasi. Tombol menguji implementasi lokal yang disalin persis dari snapshot Colab.")
-    if st.button("Jalankan 18 pengujian Colab"):
+    st.caption(f"{total} skenario memakai fixture uji terkontrol. Fixture ini terpisah dari data jadwal aplikasi. Tombol menguji implementasi lokal yang disalin persis dari snapshot Colab.")
+    if st.button(f"Jalankan {total} pengujian Colab"):
         from .verification import run_test_plan
         with st.spinner("Menjalankan pengujian…"):
             st.session_state.colab_test_report = run_test_plan()
     report = st.session_state.get("colab_test_report")
     if report:
         passed = sum(status=="LULUS" for _,status,_ in report)
-        if passed==18: st.success("18 dari 18 pengujian lulus.")
-        else: st.error(f"{passed} dari 18 pengujian lulus. Periksa detail di bawah.")
+        if passed==total: st.success(f"{total} dari {total} pengujian lulus.")
+        else: st.error(f"{passed} dari {total} pengujian lulus. Periksa detail di bawah.")
     else:
         report = [(key,"TERDAFTAR","Belum dijalankan pada sesi ini.") for key in STATUS["test_runners"]]
     st.dataframe(pd.DataFrame(report,columns=["ID","Status","Detail"]),hide_index=True,width="stretch")

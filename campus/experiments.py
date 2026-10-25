@@ -5,7 +5,7 @@ from .hash_table import HashTableChaining
 from .heap import MinHeapPriorityQueue
 from .avl import AVLTree
 from .trie import Trie
-from .dp import optimize_schedule, brute_force_reference
+from .dp import optimize_schedule, optimize_schedule_memo, naive_recursive, chain_requests, brute_force_reference
 from bisect import insort
 import gc
 
@@ -169,6 +169,21 @@ def run_benchmarks(sizes=(240, 1000, 10000, 100000), repeat=5, seed=SEED):
         assert optimize_schedule(batch)[0] == brute_force_reference(batch)[0]
         record("DP", "same small input", "weighted intervals", n, None, lambda: batch, optimize_schedule)
         record("DP", "same small input", "brute force", n, None, lambda: batch, brute_force_reference)
+
+    # S7: naif vs memo vs tabulasi pada input yang persis sama. Dua jenis input:
+    # padat (realistis, banyak tabrakan) dan rantai (p(j)=j-1; kasus terburuk
+    # rekursi naif O(2^n), karena itu ukurannya lebih kecil). Metrik "calls"
+    # menghitung pemanggilan OPT() untuk naif/memo.
+    for operation, sizes, make in (("padat: naif vs memo vs tabulasi", (10, 15, 20, 25), generate_requests),
+                                   ("rantai: naif vs memo vs tabulasi", (10, 15, 20), chain_requests)):
+        for n in sizes:
+            batch = make(n, seed)
+            assert naive_recursive(batch)[0] == optimize_schedule_memo(batch)[0] == optimize_schedule(batch)[0]
+            record("DP", operation, "rekursi naif", n, None, lambda: batch, naive_recursive,
+                   lambda state, result: {"calls": result[1]})
+            record("DP", operation, "memoization", n, None, lambda: batch, optimize_schedule_memo,
+                   lambda state, result: {"calls": result[2]})
+            record("DP", operation, "tabulation", n, None, lambda: batch, optimize_schedule)
     return results
 
 BENCHMARK_SIZES = [240, 1000, 10000, 100000]

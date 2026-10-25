@@ -124,6 +124,21 @@ def test_t18():
                     replace(class_records[1], activity_type="Event")]:
         assert len(merge_equivalent_classes([class_records[0], changed], eq, table)) == 2
 
+def test_t19():
+    rng = Random(SEED)
+    for case in range(10):
+        sample = generate_requests(rng.randrange(0, 16), seed=rng.randrange(1_000_000))
+        expected = optimize_schedule(sample)
+        memo_value, memo_ids, memo_calls = optimize_schedule_memo(sample)
+        assert (memo_value, memo_ids) == expected, "Memoisasi harus identik dengan tabulasi."
+        naive_value, naive_calls = naive_recursive(sample)
+        assert naive_value == memo_value, "Nilai optimum naif harus sama."
+        assert memo_calls <= naive_calls, "Memoisasi tidak boleh lebih boros pemanggilan dari naif."
+    chain = chain_requests(12)
+    assert optimize_schedule_memo(chain)[:2] == optimize_schedule(chain)
+    assert naive_recursive(chain) == (5 * 12, 2 ** 13 - 1)  # Rantai: eksponensial murni.
+    assert optimize_schedule_memo([]) == (0, [], 0) and naive_recursive([]) == (0, 0)
+
 def test_avl_delete_and_atomic_updates():
     rng = Random(SEED)
     tree = AVLTree()
@@ -200,14 +215,14 @@ def test_integration_boundaries():
     empty = schedule_across_rooms([], *make_room_registry([]))
     assert empty["bookings"] == [] and empty["rejected"] == []
 
-TEST_IDS = [f"T{i:02d}" for i in range(1, 19)]
+TEST_IDS = [f"T{i:02d}" for i in range(1, 20)]
 
 TEST_RUNNERS = {"T01": test_t01, "T02": test_t02, "T03": test_t03,
                 "T04": test_t04, "T05": test_t05, "T06": test_t06,
                 "T07": test_t07, "T08": test_t08, "T09": test_t09,
                 "T10": test_t10, "T11": test_t11, "T12": test_t12,
                 "T13": test_t13, "T14": test_t14, "T15": test_t15,
-                "T16": test_t16, "T17": test_t17, "T18": test_t18}
+                "T16": test_t16, "T17": test_t17, "T18": test_t18, "T19": test_t19}
 
 RUN_TESTS = True
 

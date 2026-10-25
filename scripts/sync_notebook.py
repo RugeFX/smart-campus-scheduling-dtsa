@@ -64,19 +64,19 @@ write("trie.py", "from .hash_table import HashTableChaining\n\n" + defs("TrieNod
 write("avl.py", "from typing import Optional, List\nfrom .models import Room\n\n" + defs("AVLNode", "AVLTree"))
 write("generators.py", "from .models import *\n\n" + defs("generate_rooms", "generate_requests", "generate_search_entries"))
 write("dp.py", "from .models import *\nfrom .generators import generate_requests\n\n" +
-      defs("validate_candidates", "find_previous_compatible", "optimize_schedule", "explain_dp_table", "no_overlap", "brute_force_reference", "earliest_finish_reference", "verify_dp_random_cases"))
+      defs("validate_candidates", "find_previous_compatible", "optimize_schedule", "optimize_schedule_memo", "explain_dp_table", "no_overlap", "brute_force_reference", "earliest_finish_reference", "verify_dp_random_cases", "naive_recursive", "chain_requests", "compare_dp_methods"))
 service_names = ["MergedClassRecord", "merge_equivalent_classes", "validate_room_registry",
     "stage_room_updates", "commit_room_registry", "update_room_usage", "touched_regular_slots",
     "schedule_across_rooms", "make_room_registry", "simulate_feb_allocation"]
 write("service.py", "from copy import deepcopy\nfrom datetime import date\nimport json\nimport pandas as pd\nfrom .models import *\nfrom .hash_table import HashTableChaining\nfrom .heap import MinHeapPriorityQueue\nfrom .trie import Trie, bilingual_autocomplete\nfrom .avl import AVLTree\nfrom .dp import optimize_schedule\n\n" + defs(*service_names))
 write("integration_demo.py", "from .models import *\nfrom .demo import *\nfrom .service import *\n\n" + defs("demo_integration"))
 benchmark_names = [name for name in definitions if name.startswith("benchmark_") or name in ("measure_operation", "measure_peak_memory", "run_benchmarks")]
-write("experiments.py", "from .models import *\nfrom .generators import *\nfrom .hash_table import HashTableChaining\nfrom .heap import MinHeapPriorityQueue\nfrom .avl import AVLTree\nfrom .trie import Trie\nfrom .dp import optimize_schedule, brute_force_reference\nfrom bisect import insort\nimport gc\n\n" + defs(*benchmark_names) + "\n\n" + assigns("BENCHMARK_SIZES"))
+write("experiments.py", "from .models import *\nfrom .generators import *\nfrom .hash_table import HashTableChaining\nfrom .heap import MinHeapPriorityQueue\nfrom .avl import AVLTree\nfrom .trie import Trie\nfrom .dp import optimize_schedule, optimize_schedule_memo, naive_recursive, chain_requests, brute_force_reference\nfrom bisect import insort\nimport gc\n\n" + defs(*benchmark_names) + "\n\n" + assigns("BENCHMARK_SIZES"))
 heap_tests = ["heap_test_request", "test_t01", "test_t02", "test_t03", "test_heap_aging", "test_heap_random", "test_heap_invalid", "run_heap_tests"]
 if "run_heap_tests" in definitions:
     write("heap_tests.py", "from .models import ScheduleRequest, PRIORITY, VALUE, Random, replace\nfrom .heap import MinHeapPriorityQueue\n\n" + defs(*heap_tests))
 verification_imports = "from .models import *\nfrom .demo import *\nfrom .heap_tests import *\nfrom .notebook_tests import test_t04, test_t05, test_t06\nfrom .service import *\nfrom .avl import AVLTree\nfrom .trie import Trie, bilingual_autocomplete\nfrom .dp import *\n\n"
-extra_tests = [name for name in definitions if name in [f"test_t{i:02d}" for i in range(7,19)] or name in ["test_rotation_sequence", "test_avl_delete_and_atomic_updates", "test_integration_boundaries"]]
+extra_tests = [name for name in definitions if name in [f"test_t{i:02d}" for i in range(7,20)] or name in ["test_rotation_sequence", "test_avl_delete_and_atomic_updates", "test_integration_boundaries"]]
 write("verification.py", verification_imports + defs(*extra_tests) + "\n\n" + assigns("TEST_IDS", "TEST_RUNNERS", "RUN_TESTS") + "\n\n" + defs("run_test_plan"))
 write("notebook_tests.py", "from .hash_table import HashTableChaining, weak_hash\n\n" + defs("WeakHashTable", "test_t04", "test_t05", "test_t06", "test_hash_tambahan", "run_hash_tests"))
 write("search_bridge.py", "from .hash_table import HashTableChaining\nfrom .trie import Trie\n\n" + defs("hubungkan_pencarian_feb") + "\n\n" + assigns("AKTIFKAN_PENCARIAN_FEB"))
@@ -96,7 +96,7 @@ for name in ["HashTableChaining", "MinHeapPriorityQueue", "Trie", "AVLTree"]:
     for method in node.body:
         if isinstance(method, ast.FunctionDef):
             operations[f"{name}.{method.name}"] = {"implemented": not pending(method), "cell": index}
-for name in ["optimize_schedule", "merge_equivalent_classes", "update_room_usage", "schedule_across_rooms", "demo_integration", "hubungkan_pencarian_feb"]:
+for name in ["optimize_schedule", "optimize_schedule_memo", "merge_equivalent_classes", "update_room_usage", "schedule_across_rooms", "demo_integration", "hubungkan_pencarian_feb"]:
     index, node = definitions[name]
     operations[name] = {"implemented": not pending(node), "cell": index}
 flags = {name: ast.literal_eval(assignments[name][1].value) for name in ["AKTIFKAN_PENCARIAN_FEB", "RUN_TESTS", "AGING_STEP_MINUTES"]}
