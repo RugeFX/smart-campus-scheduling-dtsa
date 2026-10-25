@@ -3,6 +3,7 @@ from io import BytesIO, StringIO
 from contextlib import redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
+from time import perf_counter
 import json
 import altair as alt
 import pandas as pd
@@ -13,7 +14,7 @@ from campus.hash_table import HashTableChaining
 from campus.trie import bilingual_autocomplete
 from campus.search_pairs import pair_indexes, expand_course_ids
 from campus.adapters import RoomView
-from campus.dp import optimize_schedule, earliest_finish_reference, explain_dp_table, brute_force_reference
+from campus.dp import optimize_schedule, optimize_schedule_memo, naive_recursive, earliest_finish_reference, explain_dp_table, brute_force_reference
 from campus.models import VALUE
 from campus.capabilities import SOURCE_LABEL, SNAPSHOT_HASH, status_rows, STATUS
 from campus.workspace import AllocationWorkspace, week_of
@@ -303,12 +304,19 @@ def schedule_page(data):
     groups=sorted({(r.room_id,r.day) for r in candidates})
     group=st.selectbox("Ruang dan hari yang dievaluasi",groups,format_func=lambda g:f"{g[0]} · {g[1]}",key="dp_group")
     batch=[r for r in candidates if (r.room_id,r.day)==group]
-    total,selected=optimize_schedule(batch)
+    method=st.radio("Metode DP",("Tabulation (bottom-up)","Memoization (top-down)"),horizontal=True,key="dp_method")
+    if method.startswith("Memoization"):
+        total,selected,method_calls=optimize_schedule_memo(batch)
+        calls_note=f"{method_calls} pemanggilan OPT (top-down)"
+    else:
+        total,selected=optimize_schedule(batch)
+        calls_note=f"{len(batch)} sel DP diisi (bottom-up)"
     greedy,_=earliest_finish_reference(batch)
     a,b,c=st.columns(3)
     a.metric("Nilai kombinasi DP",total)
     b.metric("Kelas dalam kombinasi",f"{len(selected)} / {len(batch)}")
     c.metric("Nilai pembanding selesai tercepat",greedy)
+    st.caption(f"Metode aktif: {method} · {calls_note}. Kedua metode menghasilkan kombinasi yang sama.")
     st.caption(f"Semua kandidat adalah ujian: bobot {VALUE['Examination']} per baris sesuai konfigurasi Colab. Bobot bukan kolom Excel. Dengan bobot sama, DP memaksimalkan jumlah baris yang tidak tumpang tindih.")
     timeline(batch,selected)
     st.dataframe(request_frame(batch).assign(Hasil=["Masuk kombinasi DP" if r.request_id in selected else "Di luar kombinasi DP" for r in batch]),hide_index=True,width="stretch")
@@ -322,6 +330,19 @@ def schedule_page(data):
                 if value==total: st.success(f"Nilai DP sesuai pembanding: {value}.")
                 else: st.error(f"Nilai berbeda: DP {total}, pembanding {value}.")
         else: st.caption("Pembanding semua kombinasi dibatasi 15 baris.")
+    with st.expander("Perbandingan biaya: rekursi naif vs memoization vs tabulation"):
+        rows=[]
+        if len(batch)<=26:
+            started=perf_counter(); naive_total,naive_calls=naive_recursive(batch)
+            rows.append({"Metode":"Rekursi naif","Nilai":naive_total,"Pemanggilan OPT / sel":naive_calls,"Detik":round(perf_counter()-started,6)})
+        else: st.caption("Rekursi naif dilewati: lebih dari 26 baris (eksponensial O(2^n)).")
+        started=perf_counter(); memo_total,memo_ids,memo_calls=optimize_schedule_memo(batch)
+        rows.append({"Metode":"Memoization (top-down)","Nilai":memo_total,"Pemanggilan OPT / sel":memo_calls,"Detik":round(perf_counter()-started,6)})
+        started=perf_counter(); tab_total,tab_ids=optimize_schedule(batch)
+        rows.append({"Metode":"Tabulation (bottom-up)","Nilai":tab_total,"Pemanggilan OPT / sel":len(batch),"Detik":round(perf_counter()-started,6)})
+        if {row["Nilai"] for row in rows}!={total}: st.error("Nilai antar metode berbeda; periksa implementasi DP.")
+        st.dataframe(rows,hide_index=True,width="stretch")
+        st.caption("Pemanggilan OPT menghitung masuknya fungsi rekursif pada naif/memo; tabulation menghitung sel DP yang diisi (n). Batch Excel nyata kecil sehingga selisih waktu tipis; kurva eksponensial naif terlihat pada benchmark notebook.")
     chosen=[r for r in batch if r.request_id in selected]
     st.download_button("Unduh hasil analisis CSV",request_frame(chosen).to_csv(index=False).encode("utf-8-sig"),"analisis_jadwal_excel.csv","text/csv")
     st.caption("DP belum memeriksa kapasitas, fasilitas, konflik dosen/mahasiswa, atau kegiatan wajib. Baris online tidak masuk analisis ruangan fisik.")
