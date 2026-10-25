@@ -1,6 +1,6 @@
 # Smart Campus · Versi penuh
 
-Dashboard Streamlit Kelompok 2 UTS DtSA. **Excel FEB adalah sumber jadwal aplikasi; Colab adalah sumber algoritma.** Seluruh implementasi tersinkron ke notebook lengkap yang terakhir disimpan 21 Oktober 2026, 20.06 WIB.
+Dashboard Streamlit Kelompok 2 UTS DtSA. **Excel FEB adalah sumber jadwal aplikasi; Colab adalah sumber algoritma.** Seluruh implementasi tersinkron ke notebook lengkap yang terakhir disimpan 25 Oktober 2026, 20.27 WIB.
 
 ## Menjalankan
 
@@ -51,7 +51,7 @@ Windows: aktivasi memakai `.venv\Scripts\activate`. Buka alamat yang ditampilkan
 ## Sinkronisasi dan verifikasi
 
 ```sh
-python scripts/sync_notebook.py references/UTS_Group2_Smart_Campus.ipynb 2026-10-21T13:06:23.622Z
+python scripts/sync_notebook.py references/UTS_Group2_Smart_Campus.ipynb 2026-10-25T13:27:10.361Z
 python -m pip install -r requirements-dev.txt
 python -m pytest -q
 ```
