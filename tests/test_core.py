@@ -123,9 +123,9 @@ def test_excel_search_uses_bridge_while_saved_notebook_flag_is_preserved():
 
 
 def test_plan_has_no_invented_registered_tests():
-    assert set(TEST_RUNNERS)=={f'T{i:02d}' for i in range(1,29)} and RUN_TESTS is True
-    assert len(run_test_plan())==28
-    assert [status for _,status,_ in run_test_plan()]==['LULUS']*28
+    assert set(TEST_RUNNERS)=={f'T{i:02d}' for i in range(1,34)} and RUN_TESTS is True
+    assert len(run_test_plan())==33
+    assert [status for _,status,_ in run_test_plan()]==['LULUS']*33
 
 
 def test_saved_benchmarks_are_verified_against_snapshot():

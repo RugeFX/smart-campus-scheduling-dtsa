@@ -34,3 +34,7 @@ Hindari dekorasi yang mengalihkan dari jadwal, tabel, dan keputusan; hindari ang
 ## Accessibility & Inclusion
 
 Kontrol standar Streamlit dengan label, navigasi keyboard, kontras terbaca, tanpa animasi dekoratif. Status memakai teks selain warna.
+
+## Tambahan MST yang disetujui pengguna · 27 Oktober 2026
+
+Koneksi ruang adalah simulasi rancangan jaringan. Daftar ruang/gedung/lantai tetap berasal dari workbook aktif; Excel tidak memiliki sisi/jarak/biaya. Pengguna menyetujui sisi dan biaya asumsi yang dapat diedit untuk satu fitur MST dengan dua metode, Kruskal dan Prim. Semua label, ekspor, diagram dan penjelasan harus menjaga batas sumber ini. Detail bukti dan pengukuran tersedia secara bertahap, bukan memenuhi layar awal.

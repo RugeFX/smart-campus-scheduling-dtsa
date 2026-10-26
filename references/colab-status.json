@@ -1,6 +1,6 @@
 {
-  "sha256": "e49cb2371c7b184ea4b13a0ef5d41b55a3f75c5bc0f45be9217c163269886d0e",
-  "modified_time": "2026-10-26T15:22:31.915Z",
+  "sha256": "df6ffa68e84614fa6e577c8f5a6124bc2247c6c247c88c17f8cf0b28f3e8109c",
+  "modified_time": "2026-10-26T17:48:23.606Z",
   "operations": {
     "HashTableChaining.__init__": {
       "implemented": true,
@@ -346,6 +346,54 @@
       "implemented": true,
       "cell": 32
     },
+    "UnionFind.__init__": {
+      "implemented": true,
+      "cell": 38
+    },
+    "UnionFind.find": {
+      "implemented": true,
+      "cell": 38
+    },
+    "UnionFind.union": {
+      "implemented": true,
+      "cell": 38
+    },
+    "PrimMinHeap.__init__": {
+      "implemented": true,
+      "cell": 38
+    },
+    "PrimMinHeap.__bool__": {
+      "implemented": true,
+      "cell": 38
+    },
+    "PrimMinHeap.push": {
+      "implemented": true,
+      "cell": 38
+    },
+    "PrimMinHeap.pop": {
+      "implemented": true,
+      "cell": 38
+    },
+    "kruskal_mst": {
+      "implemented": true,
+      "cell": 38
+    },
+    "prim_mst": {
+      "implemented": true,
+      "cell": 38
+    },
+    "validate_mst": {
+      "implemented": true,
+      "cell": 38
+    },
+    "mst_cut_witness": {
+      "implemented": true,
+      "cell": 38
+    },
+    "mst_room_scenario": {
+      "implemented": true,
+      "cell": 38
+    },
     "select_activities": {
       "implemented": true,
       "cell": 34
@@ -368,19 +416,19 @@
     },
     "merge_equivalent_classes": {
       "implemented": true,
-      "cell": 38
+      "cell": 40
     },
     "update_room_usage": {
       "implemented": true,
-      "cell": 38
+      "cell": 40
     },
     "schedule_across_rooms": {
       "implemented": true,
-      "cell": 38
+      "cell": 40
     },
     "demo_integration": {
       "implemented": true,
-      "cell": 38
+      "cell": 40
     },
     "hubungkan_pencarian_feb": {
       "implemented": true,
@@ -421,6 +469,11 @@
     "T25",
     "T26",
     "T27",
-    "T28"
+    "T28",
+    "T29",
+    "T30",
+    "T31",
+    "T32",
+    "T33"
   ]
 }

@@ -18,6 +18,7 @@ def ready(*operations):
 
 def status_rows():
     return [
+        {"Fitur":"MST · Kruskal / Prim", "Status":"Siap · koneksi & biaya simulasi" if ready("kruskal_mst", "prim_mst", "validate_mst") else "TODO"},
         {"Fitur":"Hash linear probing / tombstone", "Status":"Siap" if ready("HashTableLinearProbing.delete") else "TODO"},
         {"Fitur":"Greedy activity selection", "Status":"Siap" if ready("select_activities") else "TODO"},
         {"Fitur":"MaxHeap / Heap Sort", "Status":"Siap" if ready("MaxHeap.pop","heap_sort") else "TODO"},

@@ -1,6 +1,6 @@
 {
-  "verified_at_utc": "2026-10-26T15:21:11.950037+00:00",
-  "code_cells": 21,
+  "verified_at_utc": "2026-10-26T17:45:29.269907+00:00",
+  "code_cells": 23,
   "test_report": [
     [
       "T01",
@@ -141,11 +141,36 @@
       "T28",
       "LULUS",
       ""
+    ],
+    [
+      "T29",
+      "LULUS",
+      ""
+    ],
+    [
+      "T30",
+      "LULUS",
+      ""
+    ],
+    [
+      "T31",
+      "LULUS",
+      ""
+    ],
+    [
+      "T32",
+      "LULUS",
+      ""
+    ],
+    [
+      "T33",
+      "LULUS",
+      ""
     ]
   ],
   "benchmark_records": 79,
   "environment": {
-    "timestamp_utc": "2026-10-26T15:20:06.178440+00:00",
+    "timestamp_utc": "2026-10-26T17:44:20.948389+00:00",
     "python": "3.12.14",
     "system": "Darwin",
     "release": "27.0.0",
@@ -167,5 +192,47 @@
     "accepted": 189,
     "rejected": 7,
     "excluded": 47
-  }
+  },
+  "mst": {
+    "benchmark_records": 24,
+    "environment": {
+      "timestamp_utc": "2026-10-26T17:44:20.948389+00:00",
+      "python": "3.12.14",
+      "system": "Darwin",
+      "release": "27.0.0",
+      "architecture": "arm64",
+      "seed": 42,
+      "repeat": 5,
+      "warmup_runs": 1,
+      "source": "synthetic; not FEB Excel",
+      "sizes": [
+        240,
+        1000,
+        10000,
+        100000
+      ],
+      "input_fingerprint": "6c42894f9ff7c1a19c57799bbc0ce62b933be86ae4787ab1bc18a07adbdc5c7b",
+      "memory_scope": "extra Python allocations during action; setup and native allocations excluded",
+      "records": 24,
+      "scenario_sizes": [
+        16,
+        32,
+        64,
+        128
+      ],
+      "scenarios": [
+        "sparse",
+        "dense",
+        "forest"
+      ],
+      "measured_at_utc": "2026-10-26T17:45:29.250331+00:00",
+      "timestamp_scope": "after MST measurements completed",
+      "environment_status": "verified_local_run"
+    },
+    "excel_nodes": 16,
+    "assumed_edges": 22,
+    "selected_edges": 15,
+    "cost_simulation": 17.0
+  },
+  "notebook_sha256": "df6ffa68e84614fa6e577c8f5a6124bc2247c6c247c88c17f8cf0b28f3e8109c"
 }

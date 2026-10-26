@@ -13,6 +13,7 @@ from .avl import AVLTree
 from .trie import Trie, bilingual_autocomplete
 from .dp import *
 
+from .mst import *
 def test_t20():
     rng=Random(42)
     values=[rng.randrange(-100,101) for _ in range(150)]
@@ -307,9 +308,83 @@ def test_integration_boundaries():
     empty = schedule_across_rooms([], *make_room_registry([]))
     assert empty["bookings"] == [] and empty["rejected"] == []
 
-TEST_IDS = [f"T{i:02d}" for i in range(1, 29)]
+def test_t29():
+    nodes = ("A", "B", "C", "D")
+    edges = [("A", "B", 1), ("B", "C", 2), ("A", "C", 8), ("C", "D", 3), ("A", "D", 9)]
+    for algorithm in (kruskal_mst, prim_mst):
+        result = algorithm(nodes, edges, trace_limit=2)
+        assert result.total_cost == 6 and len(result.edges) == 3
+        assert len(result.trace) == 2 and validate_mst(nodes, edges, result)["valid"]
+        assert mst_cut_witness(nodes, edges, result)["safe"]
 
-TEST_RUNNERS = {"T01": test_t01, "T02": test_t02, "T03": test_t03, "T04": test_t04, "T05": test_t05, "T06": test_t06, "T07": test_t07, "T08": test_t08, "T09": test_t09, "T10": test_t10, "T11": test_t11, "T12": test_t12, "T13": test_t13, "T14": test_t14, "T15": test_t15, "T16": test_t16, "T17": test_t17, "T18": test_t18, "T19": test_t19, "T20": test_t20, "T21": test_t21, "T22": test_t22, "T23": test_t23, "T24": test_t24, "T25": test_t25, "T26": test_t26, "T27": test_t27, "T28": test_t28}
+def test_t30():
+    for nodes, edges, cost, components in [((), [], 0, 0), (("A",), [], 0, 1),
+            (("A", "B", "C", "D"), [("A", "B", 2)], 2, 3)]:
+        for algorithm in (kruskal_mst, prim_mst):
+            result = algorithm(nodes, edges)
+            assert result.total_cost == cost and len(result.components) == components
+            assert len(result.edges) == len(nodes) - components
+            assert validate_mst(nodes, edges, result)["valid"]
+
+def test_t31():
+    nodes = ("A", "B", "C", "D")
+    edges = [("A", "B", -4), ("B", "C", 0), ("A", "C", 0), ("C", "D", 2), ("B", "D", 2)]
+    for algorithm in (kruskal_mst, prim_mst):
+        result = algorithm(nodes, edges)
+        assert result.total_cost == -2 and validate_mst(nodes, edges, result)["valid"]
+    uf = UnionFind(nodes)
+    assert uf.union("A", "B") and uf.union("C", "D") and uf.union("B", "D")
+    assert not uf.union("A", "C") and len({uf.find(n) for n in nodes}) == 1
+    heap = PrimMinHeap()
+    for value in [(2, "A", "B"), (-1, "A", "C"), (2, "A", "A")]:
+        heap.push(value)
+    assert [heap.pop() for _ in range(3)] == [(-1, "A", "C"), (2, "A", "A"), (2, "A", "B")]
+
+def test_t32():
+    bad = [(("A", "A"), []), (("A",), [("A", "A", 1)]), (("A", "B"), [("A", "X", 1)]),
+           (("A", "B"), [("A", "B", float("nan"))]), (("A", "B"), [("A", "B", True)]),
+           (("A", "B"), [("A", "B", 1), ("B", "A", 2)])]
+    for nodes, edges in bad:
+        for algorithm in (kruskal_mst, prim_mst):
+            try:
+                algorithm(nodes, edges)
+            except ValueError:
+                pass
+            else:
+                raise AssertionError("Graf tidak valid harus ditolak")
+    nodes, edges = ("A", "B", "C"), [("A", "B", 1), ("B", "C", 1), ("A", "C", 5)]
+    # Spans all vertices and is acyclic, but deliberately more expensive.
+    wrong = MSTResult(nodes, (MSTEdge("A", "B", 1), MSTEdge("A", "C", 5)), (nodes,), 6, "wrong")
+    assert not validate_mst(nodes, edges, wrong)["valid"]
+
+def mst_bruteforce_cost(nodes, edges):
+    """Independent exhaustive subset oracle for SMALL graphs, never UI input."""
+    from itertools import combinations
+    nodes, edges = validate_mst_graph(nodes, edges)
+    groups = mst_components(nodes, edges)
+    count = len(nodes) - len(groups)
+    target = {frozenset(group) for group in groups}
+    best = None
+    for subset in combinations(edges, count):
+        if {frozenset(group) for group in mst_components(nodes, subset)} == target:
+            cost = sum(e.weight for e in subset)
+            best = cost if best is None else min(best, cost)
+    return 0 if best is None and not nodes else best
+
+def test_t33():
+    rng = Random(42)
+    for _ in range(60):
+        nodes = tuple(f"R{i}" for i in range(rng.randint(1, 6)))
+        edges = [(u, v, rng.randint(-5, 9)) for i, u in enumerate(nodes)
+                 for v in nodes[i + 1:] if rng.random() < .5]
+        expected = mst_bruteforce_cost(nodes, edges)
+        for algorithm in (kruskal_mst, prim_mst):
+            result = algorithm(nodes, edges)
+            assert result.total_cost == expected and validate_mst(nodes, edges, result)["valid"]
+
+TEST_IDS = [f"T{i:02d}" for i in range(1, 34)]
+
+TEST_RUNNERS = {"T01": test_t01, "T02": test_t02, "T03": test_t03, "T04": test_t04, "T05": test_t05, "T06": test_t06, "T07": test_t07, "T08": test_t08, "T09": test_t09, "T10": test_t10, "T11": test_t11, "T12": test_t12, "T13": test_t13, "T14": test_t14, "T15": test_t15, "T16": test_t16, "T17": test_t17, "T18": test_t18, "T19": test_t19, "T20": test_t20, "T21": test_t21, "T22": test_t22, "T23": test_t23, "T24": test_t24, "T25": test_t25, "T26": test_t26, "T27": test_t27, "T28": test_t28, "T29": test_t29, "T30": test_t30, "T31": test_t31, "T32": test_t32, "T33": test_t33}
 
 RUN_TESTS = True
 

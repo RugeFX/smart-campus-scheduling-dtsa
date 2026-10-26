@@ -1,8 +1,11 @@
 {
-  "notebook_sha256": "e49cb2371c7b184ea4b13a0ef5d41b55a3f75c5bc0f45be9217c163269886d0e",
-  "source": "Executed saved notebook locally on 26-10-2026; synthetic benchmark fixtures, not application schedule",
+  "notebook_sha256": "df6ffa68e84614fa6e577c8f5a6124bc2247c6c247c88c17f8cf0b28f3e8109c",
+  "source": "Executed saved notebook locally on 27-10-2026; synthetic benchmark fixtures, not application schedule",
   "records": 79,
   "additional_records": 43,
-  "benchmark_sha256": "2a341d0a602ab55d447db32ff3b89fb979dbd090781088b05937f7813c2d18e4",
-  "additional_sha256": "524df67fd79031733dbb0a92886d8adbdc18db8ce9656594d03d4e33b923207f"
+  "mst_records": 24,
+  "benchmark_sha256": "2dbb82cc7115f86e39607fe7e2fae98f4b7c6e70706f10105d7fd9788c47a189",
+  "additional_sha256": "4ae041b748eb8884192d442058f790cb3a0bfe829dafae8270130a749dece0fc",
+  "mst_sha256": "13bf423e8af38d2f4cacd593b936eb6a0f23af5dca537889c93ea50cf30c0dfe",
+  "mst_environment_sha256": "2eda4690abf78024765ee268a28e5862c6b80d1cc40edea45afe4f19239b434b"
 }

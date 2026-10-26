@@ -17,7 +17,7 @@ def button(at,label): return next(b for b in at.button if b.label==label)
 def test_all_pages_render_with_excel():
     at=app()
     assert not at.exception
-    for page in ['Cari jadwal','Antrean kegiatan','Simulasi alokasi','Ruangan','Pilih jadwal','Eksperimen','Data & panduan']:
+    for page in ['Cari jadwal','Antrean kegiatan','Simulasi alokasi','Ruangan','Pilih jadwal','Koneksi ruang','Eksperimen','Data & panduan']:
         at.button(key='nav_'+page).click().run()
         assert not at.exception,page
 
@@ -138,10 +138,10 @@ def test_experiments_use_excel_counts_and_full_registered_tests():
     assert at.dataframe[0].value['Baris Excel'].tolist()==[243,122,61,16]
     at.button(key='nav_'+'Data & panduan').click().run()
     plan=next(df.value for df in at.dataframe if list(df.value.columns)==['ID','Status','Detail'])
-    assert plan['Status'].tolist()==['TERDAFTAR']*28
-    button(at,'Jalankan 28 pengujian Colab').click().run()
+    assert plan['Status'].tolist()==['TERDAFTAR']*33
+    button(at,'Jalankan 33 pengujian Colab').click().run()
     plan=next(df.value for df in at.dataframe if list(df.value.columns)==['ID','Status','Detail'])
-    assert plan['Status'].tolist()==['LULUS']*28
+    assert plan['Status'].tolist()==['LULUS']*33
     assert not any('acak' in b.label or 'contoh' in b.label for b in at.button)
 
 

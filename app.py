@@ -22,9 +22,10 @@ from campus.queue_ui import render_queue
 from campus.schedule_ui import render_schedule
 from campus.learning_ui import trie_delete_preview, room_algorithm_details
 from campus.full_pages import allocation_page, experiments_page, test_panel
+from campus.mst_ui import render_mst
 
 ROOT=Path(__file__).resolve().parent
-PAGES=["Ringkasan","Cari jadwal","Antrean kegiatan","Simulasi alokasi","Ruangan","Pilih jadwal","Eksperimen","Data & panduan"]
+PAGES=["Ringkasan","Cari jadwal","Antrean kegiatan","Simulasi alokasi","Ruangan","Pilih jadwal","Koneksi ruang","Eksperimen","Data & panduan"]
 st.set_page_config(page_title="Smart Campus · Kelompok 2",page_icon="◫",layout="wide")
 st.markdown('''<style>
 :root { --brand:oklch(0.48 0.10 91); --ink:oklch(0.27 0.02 240); --muted:oklch(0.47 0.02 240); --surface:oklch(0.96 0 0); --accent:oklch(0.31 0.05 235); }
@@ -155,6 +156,7 @@ def overview(data):
         st.button("Analisis pilihan jadwal",on_click=navigate,args=("Pilih jadwal",),width="stretch")
         st.button("Coba antrean Excel",on_click=navigate,args=("Antrean kegiatan",),width="stretch")
         st.button("Simulasikan alokasi ruang",on_click=navigate,args=("Simulasi alokasi",),width="stretch")
+        st.button("Rancang koneksi ruang",on_click=navigate,args=("Koneksi ruang",),width="stretch")
         st.caption("Seluruh algoritma telah tersinkron dengan Colab. Alokasi dan perubahan ruang berlangsung pada sesi simulasi.")
     st.subheader("Status fitur")
     st.dataframe(status_rows(),hide_index=True,width="stretch")
@@ -363,7 +365,7 @@ with st.sidebar:
     st.divider()
     current=st.session_state.get("page","Ringkasan")
     st.session_state.page=current if current in PAGES else "Ringkasan"
-    icons=["dashboard","search","format_list_numbered","calendar_month","meeting_room","event_available","science","description"]
+    icons=["dashboard","search","format_list_numbered","calendar_month","meeting_room","event_available","hub","science","description"]
     with st.container(key="sidebar_navigation"):
         for destination,icon in zip(PAGES,icons):
             st.button(destination,key=f"nav_{destination}",icon=f":material/{icon}:",
@@ -372,9 +374,9 @@ with st.sidebar:
                 help="Halaman aktif" if st.session_state.page==destination else f"Buka {destination.lower()}")
     page=st.session_state.page
     st.divider()
-    st.caption("Sumber data: Excel FEB aktif")
+    st.caption("Sumber ruang & jadwal: Excel FEB aktif")
     st.caption(data["source_name"])
-    st.caption("Seluruh algoritma aktif · sesi simulasi")
+    st.caption("Modul aktif · sesi simulasi")
     st.caption(f"Snapshot algoritma · {SOURCE_LABEL}")
 if page=="Ringkasan": overview(data)
 elif page=="Cari jadwal": search_page(data)
@@ -382,5 +384,6 @@ elif page=="Antrean kegiatan": queue_page(data)
 elif page=="Simulasi alokasi": allocation_page(data,get_workspace,request_frame,timeline,room_frame)
 elif page=="Ruangan": rooms_page(data)
 elif page=="Pilih jadwal": schedule_page(data)
+elif page=="Koneksi ruang": render_mst(data)
 elif page=="Eksperimen": experiments_page(data)
 else: guide_page(data)

@@ -1,6 +1,6 @@
 # Smart Campus · Versi penuh
 
-Dashboard Streamlit Kelompok 2 UTS DtSA. **Excel FEB adalah sumber jadwal aplikasi; Colab adalah sumber algoritma.** Implementasi tersinkron ke notebook yang diperbarui 26 Oktober 2026, termasuk DP dari PR #17 dan peningkatan UAS terpilih.
+Dashboard Streamlit Kelompok 2 UTS DtSA. **Excel FEB adalah sumber jadwal aplikasi; Colab adalah sumber algoritma.** Implementasi tersinkron ke notebook yang diperbarui 27 Oktober 2026, termasuk DP dari PR #17 dan peningkatan UAS terpilih.
 
 ## Menjalankan
 
@@ -25,8 +25,9 @@ Windows: aktivasi memakai `.venv\Scripts\activate`. Buka alamat yang ditampilkan
 | Simulasi alokasi | Pilih semua/sebagian/dari antrean; gabung pasangan terkonfirmasi untuk simulasi; ruang alternatif; hasil, alasan penolakan, percobaan, timeline, CSV, pembatalan dan reset | Integrasi / Zacky dan Deni |
 | Ruangan | Kapasitas, ranking, pohon/pemeriksaan AVL, log dan visual empat rotasi; MaxHeap/Heap Sort kapasitas Excel; pilih pemakaian Excel atau hasil simulasi | Dua AVL / Wildan & Asep |
 | Pilih jadwal | Tujuan jumlah kelas (Greedy) atau total nilai (DP); kombinasi ruang/hari, pilihan metode tabulasi/memoisasi, perbandingan biaya naif vs memo vs tabulasi, tabel DP, pembanding semua kombinasi, timeline, CSV; alokasi kandidat terpilih | DP / Rifqi & Abdur |
+| Koneksi ruang | Editor koneksi/biaya asumsi; graf MST, perbandingan, forest, cut/cycle witness, JSON dan 24 benchmark | MST S11: Kruskal + Prim manual |
 | Eksperimen | Pengukuran langsung data Excel untuk enam kelompok algoritma, tabel/grafik/CSV; 79 pengukuran utama + 43 tambahan terukur | Wildan dan tim |
-| Data & panduan | Lihat/unggah/ganti Excel, catatan pemeriksaan, jalankan 28 pengujian Colab dan unduh hasil | Semua anggota |
+| Data & panduan | Lihat/unggah/ganti Excel, catatan pemeriksaan, jalankan 33 pengujian Colab dan unduh hasil | Semua anggota |
 
 ## Alur demo
 
@@ -34,7 +35,7 @@ Windows: aktivasi memakai `.venv\Scripts\activate`. Buka alamat yang ditampilkan
 2. **Antrean:** pilih tanggal, masukkan kelas, lalu klik **Proses permintaan berikutnya**. Pengaturan waktu simulasi dan penjelasan algoritma tersedia di **Pengaturan & penjelasan lanjutan**. Tombol lanjut memilih riwayat antrean sebagai sumber alokasi.
 3. **Simulasi alokasi:** pilih minggu dan kelas. Secara default ruang simulasi dimulai kosong. Jalankan alokasi, baca hasil dan alasan penolakan. Kelas yang sudah dialokasikan tidak dihitung dua kali.
 4. **Ruangan:** pilih **Hasil simulasi alokasi** untuk melihat perubahan pemakaian pada minggu yang sama. Pembatalan alokasi memperbarui Hash dan kedua AVL melalui fungsi Colab.
-5. **Eksperimen:** ukur Excel aktif, atau baca arsip benchmark Colab. **Data & panduan** menyediakan tombol menjalankan T01–T28.
+5. **Eksperimen:** ukur Excel aktif, atau baca arsip benchmark Colab. **Data & panduan** menyediakan tombol menjalankan T01–T33.
 
 ## Sumber dan batas simulasi
 
@@ -51,7 +52,7 @@ Windows: aktivasi memakai `.venv\Scripts\activate`. Buka alamat yang ditampilkan
 ## Sinkronisasi dan verifikasi
 
 ```sh
-python scripts/sync_notebook.py references/UTS_Group2_Smart_Campus.ipynb 2026-10-26T15:22:31.915Z
+python scripts/sync_notebook.py references/UTS_Group2_Smart_Campus.ipynb 2026-10-26T17:48:23.606Z
 python -m pip install -r requirements-dev.txt
 python -m pytest -q
 ```
@@ -74,4 +75,22 @@ campus/workspace.py mengelola sesi dan pelacakan kelas asal; campus/full_pages.p
 - DP: implementasi tabulasi dan memoization PR #17 dipertahankan. DP dan Greedy memakai merge sort manual untuk urutan kandidat. Rekursi naif dan brute force hanya pembanding kecil, dipicu tombol.
 - Greedy: earliest-finish memaksimalkan jumlah kelas; earliest-start pembanding. Argumen pertukaran, counterexample bobot (4 vs 10), dan 100 kasus acak dicocokkan dengan brute force kardinalitas.
 
-59 tes proyek lulus; 28 skenario notebook lulus (sebagian dipanggil oleh tes proyek, tidak dijumlahkan). Benchmark memakai satu warm-up, median lima run dan memori tambahan. Semua operasi aplikasi tetap mengambil data dari Excel aktif. RB/B-Tree, DP lanjut, MST, shortest path, dan flow tetap di luar peningkatan ini.
+72 tes proyek lulus; 33 skenario notebook lulus (sebagian dipanggil oleh tes proyek, tidak dijumlahkan). Benchmark memakai satu warm-up, median lima run dan memori tambahan. Semua ruang dan jadwal tetap berasal dari Excel aktif; sisi dan biaya MST adalah asumsi simulasi eksplisit yang disetujui pengguna. RB/B-Tree, DP lanjut, shortest path, dan flow tetap di luar peningkatan ini.
+
+
+## MST S11 · tambahan 27 Oktober
+
+Halaman **Koneksi ruang** memakai daftar ruang workbook aktif untuk simulasi jaringan termurah. **Excel tidak menyediakan koneksi, jarak, atau biaya**: seluruh sisi/bobot adalah asumsi yang bisa diedit. Template 16 ruang menghasilkan 15 koneksi terpilih dengan biaya 17 satuan simulasi. Kedua metode manual (Kruskal Union-Find rank/compression dan lazy Prim min-heap) diperiksa validator struktur dan cycle property; graf terputus menghasilkan minimum spanning forest. MST tidak mengubah jadwal atau alokasi.
+
+Editor menyimpan perubahan selama sesi dan mereset ketika workbook diganti. Hasil lama disembunyikan setelah input berubah sampai dihitung ulang. Diagram, tabel dan JSON mencantumkan asumsi; panel lanjutan berisi cut witness dan 24 benchmark sparse/dense/forest dengan lima run. Penjelasan dan batas: [docs/MST.md](docs/MST.md). Catatan draft laporan: [docs/REVIEW_LAPORAN_UAS.md](docs/REVIEW_LAPORAN_UAS.md).
+
+Untuk merekam ulang bukti secara lengkap:
+
+```sh
+python scripts/verify_completed_notebook.py references/UTS_Group2_Smart_Campus.ipynb
+python scripts/record_verified_artifacts.py
+python scripts/sync_notebook.py
+python -m pytest -q
+```
+
+Snapshot lokal tidak otomatis dipublikasikan oleh script; pembaruan notebook bersama dilakukan setelah memeriksa tidak ada perubahan anggota lain dan membaca balik bytes hasil publikasi.

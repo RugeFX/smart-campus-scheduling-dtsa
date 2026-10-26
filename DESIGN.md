@@ -35,3 +35,5 @@ Halaman antrean menampilkan pemilihan kelas dan kelas berikutnya sebagai fokus u
 
 
 Peningkatan UAS: tujuan jumlah kelas (Greedy) dan total nilai (DP) dijelaskan dengan bahasa pengguna. Pilihan implementasi, trace, contoh uji dan pengaturan indeks berada di expander; kandidat operasional tetap Excel. Empat visual AVL menampilkan before/after dari log aktual.
+
+Halaman Koneksi ruang menampilkan tujuan, label asumsi dan hasil sederhana. Editor berada pada expander; tiga tab hasil/perbandingan/penjelasan mengurangi beban awal. Garis penuh mustard menandai koneksi terpilih, garis putus abu menandai alternatif; tabel dan JSON memberi alternatif untuk akses tanpa diagram. Tidak ada asumsi bahwa posisi skematis adalah peta fisik.

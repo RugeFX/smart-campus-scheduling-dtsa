@@ -1,11 +1,11 @@
 {
-  "retrieved_date": "2026-10-26",
-  "notebook_modified_utc": "2026-10-26T15:22:31.915Z",
+  "retrieved_date": "2026-10-27",
+  "notebook_modified_utc": "2026-10-26T17:48:23.606Z",
   "files": [
     {
       "file": "references/UTS_Group2_Smart_Campus.ipynb",
       "source": "https://colab.research.google.com/drive/1D0LHKRtp9G-LxFdl0vKPz_Gmcy5VNdS0",
-      "sha256": "e49cb2371c7b184ea4b13a0ef5d41b55a3f75c5bc0f45be9217c163269886d0e"
+      "sha256": "df6ffa68e84614fa6e577c8f5a6124bc2247c6c247c88c17f8cf0b28f3e8109c"
     },
     {
       "file": "data/dataset_jadwal_uts_feb_uph.xlsx",

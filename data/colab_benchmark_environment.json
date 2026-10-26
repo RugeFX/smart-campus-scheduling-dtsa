@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-10-26T15:20:06.178440+00:00",
+  "timestamp_utc": "2026-10-26T17:44:20.948389+00:00",
   "python": "3.12.14",
   "system": "Darwin",
   "release": "27.0.0",
@@ -18,5 +18,7 @@
   "memory_scope": "extra Python allocations during action; setup and native allocations excluded",
   "environment_status": "verified_local_run",
   "records": 79,
-  "additional_records": 43
+  "additional_records": 43,
+  "mst_records": 24,
+  "notebook_sha256": "df6ffa68e84614fa6e577c8f5a6124bc2247c6c247c88c17f8cf0b28f3e8109c"
 }

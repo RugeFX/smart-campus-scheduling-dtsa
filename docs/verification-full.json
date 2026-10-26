@@ -1,11 +1,11 @@
 {
-  "verified_client_date": "2026-10-24",
+  "verified_client_date": "2026-10-27",
   "project_tests": {
     "result": "passed",
-    "count": 48
+    "count": 72
   },
-  "colab_registered_tests": 18,
-  "notebook_sha256": "66982c5fc169d0ca7e4ea3f71f31e141028b4af526f7c69d15fa8adbc9d61201",
+  "colab_registered_tests": 33,
+  "notebook_sha256": "df6ffa68e84614fa6e577c8f5a6124bc2247c6c247c88c17f8cf0b28f3e8109c",
   "excel_sha256": "b582b9e371245ca26ed696898603cc6327fb82beacd1c3c8218825ec18b5e534",
   "coverage": [
     "algorithm AST equality",
@@ -15,8 +15,17 @@
     "workbook replacement",
     "all five Excel benchmarks",
     "all pages",
-    "simplified queue UI, explicit class selection and advanced controls"
+    "simplified queue UI, explicit class selection and advanced controls",
+    "MST manual Kruskal/Prim; independent exhaustive oracle on 60 small graphs",
+    "forest, isolated rooms, cut/cycle optimality certificate",
+    "MST editor stale/invalid/reset/navigation/workbook replacement",
+    "24 real repeated MST benchmarks; exact Colab published readback"
   ],
   "lab_rule_change": "deferred by user",
-  "source_notebook_modified_utc": "2026-10-21T13:06:23.622Z"
+  "source_notebook_modified_utc": "2026-10-26T17:48:23.606Z",
+  "colab_readback": {
+    "identical_bytes": true,
+    "size": 359043,
+    "sha256": "df6ffa68e84614fa6e577c8f5a6124bc2247c6c247c88c17f8cf0b28f3e8109c"
+  }
 }

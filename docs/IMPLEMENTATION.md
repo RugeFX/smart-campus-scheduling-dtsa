@@ -2,7 +2,7 @@
 
 ## Kontrak sumber
 
-Notebook lengkap 21 Oktober 2026 disalin menjadi snapshot lokal tanpa perubahan. Definisi kelas/fungsi diekstrak verbatim lewat AST, termasuk decorator. Sel notebook tidak dieksekusi saat aplikasi dimuat. Modul service hanya memuat layanan produksi dan dependensinya; demo dipisahkan ke integration_demo.py. Fixture dimuat hanya untuk pengujian yang diminta pengguna.
+Snapshot notebook bersama diperbarui dan dijalankan penuh; definisinya menjadi acuan kode algoritma aplikasi. Definisi kelas/fungsi diekstrak verbatim lewat AST, termasuk decorator. Sel notebook tidak dieksekusi saat aplikasi dimuat. Modul service hanya memuat layanan produksi dan dependensinya; demo dipisahkan ke integration_demo.py. Fixture dimuat hanya untuk pengujian yang diminta pengguna.
 
 Sumber jadwal aplikasi tetap satu workbook Excel aktif. Tabel asli, hasil normalisasi, catatan dan nomor baris disimpan terpisah. Perubahan aturan LAB belum diterapkan sesuai arahan pengguna.
 
@@ -22,14 +22,14 @@ Relasi pencarian INT–NAS tidak berarti izin penggabungan kelas. UI menawarkan 
 
 Benchmark langsung memakai data Excel: Hash vs scan kode identik; Trie vs scan awalan dan deduplikasi identik; Heap build+drain vs list terurut pada satu tanggal; AVL top-k vs list+sort; DP vs brute force pada satu ruang/hari maksimal 15 kandidat. Setup berada di luar timer dan pengukuran memori terpisah, menggunakan helper persis dari Colab.
 
-58 hasil tersimpan hanya ditampilkan sebagai arsip eksperimen Colab, dengan label sumber sintetis dan lingkungan lokal. Hash notebook pada provenance diperiksa sebelum ditampilkan. Arsip tidak masuk alur jadwal atau alokasi. UI pengujian memakai fixture terkontrol untuk T01–T18 dan menampilkan hasil aktual sesi, bukan status lulus statis.
+79 hasil utama dan 43 tambahan tersimpan hanya ditampilkan sebagai arsip eksperimen Colab, dengan label sumber sintetis dan lingkungan lokal. Hash notebook pada provenance diperiksa sebelum ditampilkan. Arsip tidak masuk alur jadwal atau alokasi. UI pengujian memakai fixture terkontrol untuk T01–T33 dan menampilkan hasil aktual sesi, bukan status lulus statis.
 
 Pengujian proyek memeriksa kesetaraan AST, transaksi gagal, slot unik, alokasi/pembatalan, gabungan dan pelepasan sumbernya, handoff antrean, kontinuitas booking, pergantian workbook, serta UI dan benchmark. Catatan kapasitas resmi, fasilitas, pasangan resmi, dan konflik dosen/mahasiswa tetap keterbatasan model yang dijelaskan pada konteks hasil.
 
 
 ### Peningkatan terpilih 26 Oktober 2026
 
-Definisi baru berasal dari notebook, lalu `sync_notebook.py` mengekstraknya tanpa menjalankan sel. `scripts/uas_sources/` menyimpan sumber pengembangan; notebook beserta hash AST tetap acuan yang diuji. `verification.json` mencatat Run all lokal sebenarnya: 21 sel kode, T01–T28 lulus, alokasi 189/7/47.
+Definisi baru berasal dari notebook, lalu `sync_notebook.py` mengekstraknya tanpa menjalankan sel. `scripts/uas_sources/` menyimpan sumber pengembangan; notebook beserta hash AST tetap acuan yang diuji. `verification.json` mencatat Run all lokal sebenarnya: 23 sel kode, T01–T33 lulus, alokasi 189/7/47.
 
 Priority Queue membandingkan prioritas efektif dan counter masuk, tanpa jam mulai pada key; jam ujian tetap payload Excel. Override prioritas milik antrean dan tidak mengubah ScheduleRequest. Hash posisi dan override ikut diperiksa validator. Aging dihitung ulang dari prioritas awal/override sehingga tidak menumpuk saat waktu sama.
 
@@ -40,3 +40,10 @@ Greedy earliest-finish optimal untuk kardinalitas pada satu ruang/hari; DP optim
 79 benchmark utama dan 43 tambahan dijalankan ulang pada Python lokal; metadata run, hash CSV, dan hash notebook ada di provenance. Tambahan mengukur PQ vs list tidak terurut/terurut, Hash load factor, naif/memo/tabulasi, dan Greedy vs oracle. Setup di luar timer; sorting pembanding list terurut berada di dalam action build+drain.
 
 UI menaruh trace, fixture, dan eksperimen dalam expander. `schedule_ui.py` memisahkan tujuan pengguna dari metode DP; `learning_ui.py` menampilkan demonstrasi yang jelas berlabel uji dan tidak dapat masuk alokasi. Memoization dibatasi 400 kandidat, naif 15, dengan tabulasi sebagai fallback.
+
+
+### MST S11 · 27 Oktober 2026
+
+Satu fitur baru dengan Kruskal dan Prim manual, validator independen dan cut witness. Node dari Excel aktif; seluruh sisi/bobot asumsi simulasi yang dapat diedit. Graph editor memiliki state sendiri diikat hash workbook/notebook, menyembunyikan hasil stale, bertahan lintas navigasi, dan reset pada sumber baru. UI memisahkan hasil pengguna dari trace dan benchmark. Rincian: [MST.md](MST.md).
+
+24 pengukuran MST ditambah benchmark sebelumnya dijalankan kembali pada namespace notebook baru. CSV menyimpan lima waktu mentah, median, memori, input fingerprint dan metadata. `record_verified_artifacts.py` memeriksa output aktual dan mengikatnya ke hash snapshot/CSV. T29–T33 mencakup 60 graf kecil dengan oracle enumerasi subset, bukan hanya kesamaan dua metode.

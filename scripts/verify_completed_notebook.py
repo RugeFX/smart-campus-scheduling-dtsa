@@ -5,6 +5,7 @@ The local Excel is supplied by running with data/ as cwd. No remote file is edit
 from contextlib import redirect_stdout
 from datetime import datetime, timezone
 import io
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -39,6 +40,9 @@ for index, cell in enumerate(notebook["cells"]):
     if "benchmark_chart" in namespace and "def run_benchmarks(" in "".join(cell["source"]):
         cell["outputs"].append({"output_type": "display_data", "metadata": {},
             "data": {"text/html": [namespace["benchmark_chart"].to_html()]}})
+    if "mst_benchmark_chart" in namespace and "def run_mst_benchmarks(" in "".join(cell["source"]):
+        cell["outputs"].append({"output_type": "display_data", "metadata": {},
+            "data": {"text/html": [namespace["mst_benchmark_chart"].to_html()]}})
     # Save progress in case the longest benchmark is interrupted.
     target.write_text(json.dumps(notebook, ensure_ascii=False, indent=1) + "\n")
 
@@ -47,11 +51,20 @@ assert all(row[1] == "LULUS" for row in namespace["test_report"])
 assert len(namespace["benchmark_results"]) == 79
 assert all(row["runs"] == 5 for row in namespace["benchmark_results"])
 assert {row["n"] for row in namespace["benchmark_results"]} >= {240, 1000, 10000, 100000}
+assert len(namespace["mst_benchmark_results"]) == 24
+assert all(row["runs"] == 5 for row in namespace["mst_benchmark_results"])
 summary = {"verified_at_utc": datetime.now(timezone.utc).isoformat(), "code_cells": count,
+    "notebook_sha256": hashlib.sha256(target.read_bytes()).hexdigest(),
     "test_report": namespace["test_report"], "benchmark_records": len(namespace["benchmark_results"]),
     "environment": namespace["benchmark_environment"],
     "feb": {"accepted": sum(len(r["bookings"]) for r in namespace["feb_allocation_demo"]["weeks"]),
             "rejected": sum(len(r["rejected"]) for r in namespace["feb_allocation_demo"]["weeks"]),
-            "excluded": len(namespace["feb_allocation_demo"]["excluded"])}}
+            "excluded": len(namespace["feb_allocation_demo"]["excluded"])},
+    "mst": {"benchmark_records": len(namespace["mst_benchmark_results"]),
+        "environment": namespace["mst_benchmark_environment"],
+        "excel_nodes": len(namespace["mst_nodes_feb"]),
+        "assumed_edges": len(namespace["mst_edges_simulasi"]),
+        "selected_edges": len(namespace["mst_kruskal_feb"].edges),
+        "cost_simulation": namespace["mst_kruskal_feb"].total_cost}}
 (target.parent / "verification.json").write_text(json.dumps(summary, indent=2) + "\n")
 print("VERIFIED:", count, "code cells; all registered tests passed; 79 measured benchmark records.")
