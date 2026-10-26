@@ -34,7 +34,7 @@ def test_excel_allocation_and_cancel_keep_provenance_and_indexes():
 def test_live_measurement_uses_active_excel(algorithm):
     data=dataset()
     result=measure_excel(data,algorithm,limit=15,repeat=1)
-    assert len(result)==2
+    assert len(result)==(3 if algorithm=='Hash Table' else 2)
     assert {r['SHA256 Excel'] for r in result}=={data['sha256']}
     assert {r['Berkas'] for r in result}=={data['source_name']}
     assert all(0<r['n']<=15 and r['Median (ms)']>=0 for r in result)
@@ -54,7 +54,7 @@ def test_full_ui_allocation_cancel_and_room_state():
     at.radio(key='room_view').set_value('Hasil simulasi alokasi').run()
     assert not at.exception
     expected={r.room_id:r.used_slots for r in workspace.registry[1].inorder()}
-    actual=at.dataframe[-1].value
+    actual=next(df.value for df in at.dataframe if 'Kapasitas asumsi' in df.value.columns and len(df.value)==16)
     assert actual.set_index('Ruang')['Slot terpakai'].to_dict()==expected
     at.button(key='nav_'+'Simulasi alokasi').click().run()
     assert len(next(iter(at.session_state['allocation_workspaces'].values())).bookings)==188
@@ -68,7 +68,7 @@ def test_ui_measurement_and_dp_allocation():
     at.button(key='nav_'+'Eksperimen').click().run()
     at.selectbox(key='benchmark_repeat').set_value(1).run()
     button(at,'Jalankan percobaan').click().run()
-    assert len(at.session_state['excel_benchmark_result'])==2 and not at.exception
+    assert len(at.session_state['excel_benchmark_result'])==3 and not at.exception
     at.button(key='nav_'+'Pilih jadwal').click().run()
     button(at,'Alokasikan kandidat ruang/hari ini').click().run()
     assert sum(len(w.bookings) for w in at.session_state['allocation_workspaces'].values())>0

@@ -26,7 +26,7 @@ Hindari dekorasi yang mengalihkan dari jadwal, tabel, dan keputusan; hindari ang
 - Pisahkan data FEB dan simulasi booking dengan label yang terlihat.
 - Tampilkan alasan hasil dan batas algoritma dekat hasilnya.
 - Detail teknis disediakan lewat panel penjelasan untuk presentasi.
-- Seluruh pencarian, input antrean, ruangan, ranking, dan kandidat DP berasal dari workbook Excel aktif; tidak ada pilihan data contoh di UI.
+- Seluruh pencarian, input antrean, ruangan, ranking, dan kandidat DP/Greedy berasal dari workbook Excel aktif; fixture penjelasan berlabel uji berada di bagian lanjutan dan tidak dapat dipilih sebagai sumber jadwal/alokasi.
 - Pengguna meminta versi penuh Streamlit yang mengikuti Colab lengkap. Semua layanan dan algoritma diekstrak tanpa mengubah definisi sumber. Simulasi alokasi, penggabungan terkonfirmasi untuk simulasi, pembatalan, perubahan kedua AVL, eksperimen dan 18 pengujian tersedia.
 - Eksperimen langsung menggunakan Excel aktif. Arsip 58 benchmark Colab diberi label input sintetis dan mesin lokal, terpisah dari data jadwal. Fixture uji hanya dijalankan melalui panel pengujian.
 - Pembahasan perubahan aturan LAB ditunda sesuai permintaan pengguna. Slot dan aturan waktu tetap mengikuti snapshot Colab saat ini.

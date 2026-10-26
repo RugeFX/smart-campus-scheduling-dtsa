@@ -42,9 +42,9 @@ for index, cell in enumerate(notebook["cells"]):
     # Save progress in case the longest benchmark is interrupted.
     target.write_text(json.dumps(notebook, ensure_ascii=False, indent=1) + "\n")
 
-assert len(namespace["test_report"]) == 18
+assert len(namespace["test_report"]) == len(namespace["TEST_IDS"])
 assert all(row[1] == "LULUS" for row in namespace["test_report"])
-assert len(namespace["benchmark_results"]) == 58
+assert len(namespace["benchmark_results"]) == 79
 assert all(row["runs"] == 5 for row in namespace["benchmark_results"])
 assert {row["n"] for row in namespace["benchmark_results"]} >= {240, 1000, 10000, 100000}
 summary = {"verified_at_utc": datetime.now(timezone.utc).isoformat(), "code_cells": count,
@@ -54,4 +54,4 @@ summary = {"verified_at_utc": datetime.now(timezone.utc).isoformat(), "code_cell
             "rejected": sum(len(r["rejected"]) for r in namespace["feb_allocation_demo"]["weeks"]),
             "excluded": len(namespace["feb_allocation_demo"]["excluded"])}}
 (target.parent / "verification.json").write_text(json.dumps(summary, indent=2) + "\n")
-print("VERIFIED:", count, "code cells; 18/18 tests; 58 measured benchmark records.")
+print("VERIFIED:", count, "code cells; all registered tests passed; 79 measured benchmark records.")

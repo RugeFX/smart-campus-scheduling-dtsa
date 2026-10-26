@@ -19,6 +19,8 @@ from campus.models import VALUE
 from campus.capabilities import SOURCE_LABEL, SNAPSHOT_HASH, status_rows, STATUS
 from campus.workspace import AllocationWorkspace, week_of
 from campus.queue_ui import render_queue
+from campus.schedule_ui import render_schedule
+from campus.learning_ui import trie_delete_preview, room_algorithm_details
 from campus.full_pages import allocation_page, experiments_page, test_panel
 
 ROOT=Path(__file__).resolve().parent
@@ -75,15 +77,15 @@ def room_frame(items):
         "Pemakaian (%)":round(r.utilization*100,1)} for r in items])
 
 
-def timeline(items,selected=None):
+def timeline(items,selected=None,method="DP"):
     if not items:
         st.info("Tidak ada baris jadwal yang memenuhi filter."); return
     frame=request_frame(items)
     frame["Awal"]=pd.to_datetime(frame["Tanggal"]+" "+frame["Mulai"])
     frame["Akhir"]=pd.to_datetime(frame["Tanggal"]+" "+frame["Selesai"])
     frame["Kelas"]=frame["Kode kelas"]+" · "+frame["Mata kuliah"]
-    frame["Status"]=["Tercatat di Excel" if selected is None else "Masuk kombinasi DP" if r.request_id in selected else "Di luar kombinasi DP" for r in items]
-    labels=["Tercatat di Excel","Masuk kombinasi DP","Di luar kombinasi DP"]
+    frame["Status"]=["Tercatat di Excel" if selected is None else f"Masuk kombinasi {method}" if r.request_id in selected else f"Di luar kombinasi {method}" for r in items]
+    labels=["Tercatat di Excel",f"Masuk kombinasi {method}",f"Di luar kombinasi {method}"]
     chart=alt.Chart(frame).mark_bar(cornerRadius=3,height=24).encode(
         x=alt.X("Awal:T",title="Waktu",axis=alt.Axis(format="%H:%M")),x2="Akhir:T",
         y=alt.Y("Kelas:N",sort=None,title=None),
@@ -150,7 +152,7 @@ def overview(data):
         st.subheader("Mulai dari kebutuhanmu")
         st.button("Cari jadwal Excel",on_click=navigate,args=("Cari jadwal",),width="stretch")
         st.button("Lihat ruangan Excel",on_click=navigate,args=("Ruangan",),width="stretch")
-        st.button("Analisis jadwal dengan DP",on_click=navigate,args=("Pilih jadwal",),width="stretch")
+        st.button("Analisis pilihan jadwal",on_click=navigate,args=("Pilih jadwal",),width="stretch")
         st.button("Coba antrean Excel",on_click=navigate,args=("Antrean kegiatan",),width="stretch")
         st.button("Simulasikan alokasi ruang",on_click=navigate,args=("Simulasi alokasi",),width="stretch")
         st.caption("Seluruh algoritma telah tersinkron dengan Colab. Alokasi dan perubahan ruang berlangsung pada sesi simulasi.")
@@ -163,8 +165,11 @@ def overview(data):
 def search_page(data):
     heading("Cari jadwal","Cari nama, kode mata kuliah, kelas, ruang, dan ID dosen dari Excel aktif.")
     st.caption("Hash Table · Adit | Trie · Zilan")
+    with st.expander("Pengaturan indeks pencarian"):
+        strategy=st.selectbox("Cara menyimpan indeks kode",["Chaining","Linear probing"],key="search_hash_strategy")
+        st.caption("Pilihan ini memengaruhi indeks kode MK dan kelas. Data serta hasil pencarian tetap sama; anak Trie tetap memakai chaining.")
     try:
-        indexes=build_search_indexes(data["ingredients"])
+        indexes=build_search_indexes(data["ingredients"],"linear" if strategy=="Linear probing" else "chaining")
         room_table=room_search_table(data)
     except (ValueError,NotImplementedError) as error:
         st.error(f"Indeks belum dapat dibangun: {error}"); return
@@ -173,6 +178,7 @@ def search_page(data):
     pair_mode=mode in ["Awalan nama","Awalan kode MK","Kode MK lengkap"]
     include_pairs=st.checkbox("Sertakan pasangan INT–NAS dari Excel",value=True,disabled=not pair_mode,key="search_include_pairs") and pair_mode
     st.caption("Pasangan mengikuti tabel Excel dan belum dikonfirmasi resmi. Opsi berlaku untuk nama/kode MK; kelas dan jumlah peserta tidak digabung.")
+    trie_delete_preview(data)
     if not query.strip():
         st.info("Masukkan nama atau kode untuk mencari jadwal."); return
     value=query.strip()
@@ -234,6 +240,8 @@ def search_page(data):
             with st.expander("Pasangan Excel yang belum dapat dipakai"):
                 st.dataframe(skipped_pairs,hide_index=True,width="stretch")
     with st.expander("Cara pencarian bekerja"):
+        table=indexes["courses"]
+        st.caption(f"Indeks {strategy}: {len(table)} kode · probes {table.probes} · collisions saat put {table.collisions} · rehash {table.rehashes}.")
         st.write("Fungsi penghubung Colab mengisi Hash kelas/MK dan Trie nama/kode dari Excel. Kode lengkap memakai Hash; awalan memakai Trie lalu detailnya diambil melalui Hash. Opsi pasangan memakai relasi eksplisit dua arah dari tabel Excel dan fungsi bilingual_autocomplete Colab. Kode/kelas hasil tidak digandakan; pasangan kosong atau ambigu tidak ditebak.")
 
 
@@ -287,85 +295,13 @@ def rooms_page(data):
                 if child: lines.append(f"{label} -> {json.dumps(child.room.room_id)};")
             return lines+dot(node.left)+dot(node.right)
         st.graphviz_chart("digraph G { node [shape=box]; "+" ".join(dot(registry.capacity.root))+"}")
+    room_algorithm_details(room_list)
     st.caption("Insert, delete, pencarian kapasitas, dan ranking AVL sudah aktif. Saat alokasi dibuat atau dibatalkan, fungsi Colab memperbarui Hash dan kedua indeks secara konsisten.")
     st.button("Kelola alokasi dan pembatalan",on_click=navigate,args=("Simulasi alokasi",),key="rooms_allocation")
 
 
 def schedule_page(data):
-    heading("Pilih jadwal","Analisis kombinasi ujian dari Excel untuk satu ruang dan satu hari menggunakan DP Colab.")
-    st.caption("Pemrograman Dinamis · Rifqi & Abdur")
-    st.info("DP menganalisis kombinasi pada satu ruang/hari. Hasil tidak mengubah jadwal Excel atau membatalkan ujian lain. Penggabungan INT–NAS dapat dipilih pada Simulasi alokasi.")
-    include_review=st.checkbox("Sertakan baris yang masih perlu diperiksa",value=False,key="dp_include_review")
-    candidates,excluded=scheduling_inputs(data,include_review)
-    with st.expander(f"Baris yang belum menjadi kandidat ({len(excluded)})"):
-        st.dataframe(excluded,hide_index=True,width="stretch")
-    if not candidates:
-        st.info("Tidak ada kandidat onsite dengan ruang, tanggal, waktu, dan peserta yang valid."); return
-    groups=sorted({(r.room_id,r.day) for r in candidates})
-    group=st.selectbox("Ruang dan hari yang dievaluasi",groups,format_func=lambda g:f"{g[0]} · {g[1]}",key="dp_group")
-    batch=[r for r in candidates if (r.room_id,r.day)==group]
-    methods=("Tabulation (bottom-up)","Memoization (top-down)") if len(batch)<=MEMO_UI_LIMIT else ("Tabulation (bottom-up)",)
-    if st.session_state.get("dp_method") not in methods: st.session_state.pop("dp_method",None)
-    method=st.radio("Metode DP",methods,horizontal=True,key="dp_method")
-    if len(batch)>MEMO_UI_LIMIT: st.caption(f"Memoization rekursif dibatasi {MEMO_UI_LIMIT} kandidat. Tabulasi tetap dapat digunakan.")
-    if method.startswith("Memoization"):
-        try:
-            total,selected,method_calls=optimize_schedule_memo(batch)
-            calls_note=f"{method_calls} pemanggilan OPT (top-down)"
-        except RecursionError:
-            total,selected=optimize_schedule(batch)
-            calls_note="Batas rekursi tercapai; hasil memakai tabulasi"
-            st.warning("Memoization melewati batas rekursi. Hasil tabulasi tetap tersedia.")
-    else:
-        total,selected=optimize_schedule(batch)
-        calls_note=f"{len(batch)} sel DP diisi (bottom-up)"
-    greedy,_=earliest_finish_reference(batch)
-    a,b,c=st.columns(3)
-    a.metric("Nilai kombinasi DP",total)
-    b.metric("Kelas dalam kombinasi",f"{len(selected)} / {len(batch)}")
-    c.metric("Nilai pembanding selesai tercepat",greedy)
-    st.caption(f"Metode aktif: {method} · {calls_note}. Kedua metode menghasilkan kombinasi yang sama.")
-    st.caption(f"Semua kandidat adalah ujian: bobot {VALUE['Examination']} per baris sesuai konfigurasi Colab. Bobot bukan kolom Excel. Dengan bobot sama, DP memaksimalkan jumlah baris yang tidak tumpang tindih.")
-    timeline(batch,selected)
-    st.dataframe(request_frame(batch).assign(Hasil=["Masuk kombinasi DP" if r.request_id in selected else "Di luar kombinasi DP" for r in batch]),hide_index=True,width="stretch")
-    with st.expander("Lihat perhitungan ambil atau lewati"):
-        output=StringIO()
-        with redirect_stdout(output): explain_dp_table(batch)
-        st.code(output.getvalue(),language=None)
-        if len(batch)<=15:
-            if st.button("Periksa dengan semua kombinasi"):
-                value,ids=brute_force_reference(batch)
-                if value==total: st.success(f"Nilai DP sesuai pembanding: {value}.")
-                else: st.error(f"Nilai berbeda: DP {total}, pembanding {value}.")
-        else: st.caption("Pembanding semua kombinasi dibatasi 15 baris.")
-    with st.expander("Perbandingan biaya: rekursi naif vs memoization vs tabulation"):
-        signature=(data["sha256"],SNAPSHOT_HASH,group,include_review)
-        if st.session_state.get("dp_compare_signature")!=signature:
-            st.session_state.pop("dp_compare_rows",None)
-            st.session_state.dp_compare_signature=signature
-        st.caption("Pengukuran hanya berjalan setelah tombol ditekan. Rekursi naif maksimal 15 kandidat; memoization rekursif maksimal 400.")
-        if st.button("Jalankan perbandingan DP",key="dp_compare"):
-            st.session_state.dp_compare_rows=compare_schedule_methods(batch)
-        rows=st.session_state.get("dp_compare_rows")
-        if rows:
-            if any(row["Nilai"]!=total for row in rows if row["Status"]=="Selesai"):
-                st.error("Nilai antar metode berbeda; periksa implementasi DP.")
-            st.dataframe(rows,hide_index=True,width="stretch")
-            st.caption("Pemanggilan OPT pada metode rekursif dan jumlah sel pada tabulasi adalah metrik berbeda. Waktu ini satu pengukuran interaktif; benchmark laporan memakai median lima pengulangan.")
-    chosen=[r for r in batch if r.request_id in selected]
-    st.download_button("Unduh hasil analisis CSV",request_frame(chosen).to_csv(index=False).encode("utf-8-sig"),"analisis_jadwal_excel.csv","text/csv")
-    st.caption("DP belum memeriksa kapasitas, fasilitas, konflik dosen/mahasiswa, atau kegiatan wajib. Baris online tidak masuk analisis ruangan fisik.")
-    st.subheader("Alokasi ruangan")
-    st.caption("Simpan kandidat terpilih ke sesi simulasi minggu ini. Pilihan ini tetap melewati pemeriksaan kapasitas dan booking yang sudah tersimpan.")
-    alternatives=st.checkbox("Coba ruang lain jika belum teralokasi",value=False,key="dp_alternatives")
-    workspace=get_workspace(data,week_of(group[1]))
-    codes=[r.request_id for r in chosen if r.request_id not in workspace.reserved_class_ids]
-    if st.button("Alokasikan kandidat ruang/hari ini",type="primary",disabled=not codes):
-        try:
-            report=workspace.allocate(codes,include_review=include_review,alternatives=alternatives)
-            st.success(f"{len(report['bookings'])} alokasi ditambahkan; {len(report['rejected'])} ditolak.")
-        except (ValueError,AssertionError) as error: st.error(str(error))
-    st.button("Buka hasil simulasi alokasi",on_click=navigate,args=("Simulasi alokasi",),key="dp_open_allocation")
+    render_schedule(data,request_frame,timeline,get_workspace)
 
 
 def guide_page(data):

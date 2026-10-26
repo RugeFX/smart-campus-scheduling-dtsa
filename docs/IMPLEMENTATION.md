@@ -25,3 +25,18 @@ Benchmark langsung memakai data Excel: Hash vs scan kode identik; Trie vs scan a
 58 hasil tersimpan hanya ditampilkan sebagai arsip eksperimen Colab, dengan label sumber sintetis dan lingkungan lokal. Hash notebook pada provenance diperiksa sebelum ditampilkan. Arsip tidak masuk alur jadwal atau alokasi. UI pengujian memakai fixture terkontrol untuk T01–T18 dan menampilkan hasil aktual sesi, bukan status lulus statis.
 
 Pengujian proyek memeriksa kesetaraan AST, transaksi gagal, slot unik, alokasi/pembatalan, gabungan dan pelepasan sumbernya, handoff antrean, kontinuitas booking, pergantian workbook, serta UI dan benchmark. Catatan kapasitas resmi, fasilitas, pasangan resmi, dan konflik dosen/mahasiswa tetap keterbatasan model yang dijelaskan pada konteks hasil.
+
+
+### Peningkatan terpilih 26 Oktober 2026
+
+Definisi baru berasal dari notebook, lalu `sync_notebook.py` mengekstraknya tanpa menjalankan sel. `scripts/uas_sources/` menyimpan sumber pengembangan; notebook beserta hash AST tetap acuan yang diuji. `verification.json` mencatat Run all lokal sebenarnya: 21 sel kode, T01–T28 lulus, alokasi 189/7/47.
+
+Priority Queue membandingkan prioritas efektif dan counter masuk, tanpa jam mulai pada key; jam ujian tetap payload Excel. Override prioritas milik antrean dan tidak mengubah ScheduleRequest. Hash posisi dan override ikut diperiksa validator. Aging dihitung ulang dari prioritas awal/override sehingga tidak menumpuk saat waktu sama.
+
+MaxHeap manual mendukung build/push/pop/peek/delete/change-key; Heap Sort menghasilkan salinan naik. Trie delete mempertahankan terminal dan cabang milik entri lain. Open addressing memakai linear probing dan tombstone; put terus mencari melewati tombstone agar update tidak menduplikasi key.
+
+Greedy earliest-finish optimal untuk kardinalitas pada satu ruang/hari; DP optimal untuk bobot pada batch yang sama. Keduanya memakai merge sort manual. Validasi 100 instance kecil menggunakan oracle brute force kardinalitas khusus, bukan penjumlahan bobot.
+
+79 benchmark utama dan 43 tambahan dijalankan ulang pada Python lokal; metadata run, hash CSV, dan hash notebook ada di provenance. Tambahan mengukur PQ vs list tidak terurut/terurut, Hash load factor, naif/memo/tabulasi, dan Greedy vs oracle. Setup di luar timer; sorting pembanding list terurut berada di dalam action build+drain.
+
+UI menaruh trace, fixture, dan eksperimen dalam expander. `schedule_ui.py` memisahkan tujuan pengguna dari metode DP; `learning_ui.py` menampilkan demonstrasi yang jelas berlabel uji dan tidak dapat masuk alokasi. Memoization dibatasi 400 kandidat, naif 15, dengan tabulasi sebagai fallback.

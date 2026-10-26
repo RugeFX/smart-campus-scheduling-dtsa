@@ -12,6 +12,9 @@ import gc
 def measure_operation(setup, action, repeat=5, read_metrics=None):
     if type(repeat) is not int or repeat < 1:
         raise ValueError("Pengulangan harus bilangan bulat positif.")
+    warm_state = setup()
+    action(warm_state)  # Warm-up terpisah dari run yang diukur.
+    del warm_state
     durations, metrics = [], []
     for _ in range(repeat):
         state = setup()  # State mutable baru; di luar waktu operasi.
@@ -103,9 +106,9 @@ def run_benchmarks(sizes=(240, 1000, 10000, 100000), repeat=5, seed=SEED):
 
     for n in sizes:
         batch = generate_requests(n, seed)
-        keyed = [((request.priority, request.start, i), request) for i, request in enumerate(batch)]
+        keyed = [((request.priority, i), request) for i, request in enumerate(batch)]
         extra = [replace(batch[i % n], request_id=f"EXTRA-{i}") for i in range(min(100, n))]
-        extra_keyed = [((request.priority, request.start, n + i), request) for i, request in enumerate(extra)]
+        extra_keyed = [((request.priority, n + i), request) for i, request in enumerate(extra)]
         metric = lambda queue, result: {"comparisons": queue.comparisons}
         record("Heap/PQ", "build", "manual heapify", n, n,
                MinHeapPriorityQueue, lambda queue: queue.build(batch), metric)

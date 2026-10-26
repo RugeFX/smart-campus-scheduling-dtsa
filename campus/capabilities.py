@@ -18,6 +18,10 @@ def ready(*operations):
 
 def status_rows():
     return [
+        {"Fitur":"Hash linear probing / tombstone", "Status":"Siap" if ready("HashTableLinearProbing.delete") else "TODO"},
+        {"Fitur":"Greedy activity selection", "Status":"Siap" if ready("select_activities") else "TODO"},
+        {"Fitur":"MaxHeap / Heap Sort", "Status":"Siap" if ready("MaxHeap.pop","heap_sort") else "TODO"},
+        {"Fitur":"Trie delete", "Status":"Siap" if ready("Trie.delete") else "TODO"},
         {"Fitur": "Hash Table", "Status": "Siap" if ready("HashTableChaining.put", "HashTableChaining.get") else "TODO"},
         {"Fitur": "Trie", "Status": "Siap" if ready("Trie.insert", "Trie.autocomplete") else "TODO"},
         {"Fitur": "Heap/PQ", "Status": "Siap" if ready("MinHeapPriorityQueue.push", "MinHeapPriorityQueue.pop") else "TODO"},

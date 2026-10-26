@@ -26,11 +26,11 @@ def notebook_definitions():
 
 
 @pytest.mark.parametrize('module,names',[
-    (heap,['MinHeapPriorityQueue']),
+    (heap,['MinHeapPriorityQueue','MaxHeap','heap_sort']),
     (trie,['TrieNode','Trie','bilingual_autocomplete']),
     (avl,['AVLNode','AVLTree']),
     (dp,['optimize_schedule','optimize_schedule_memo','naive_recursive','chain_requests','compare_dp_methods','find_previous_compatible','validate_candidates','explain_dp_table','verify_dp_random_cases']),
-    (hash_table,['HashTableChaining','polynomial_hash']),
+    (hash_table,['HashTableChaining','HashTableLinearProbing','polynomial_hash']),
     (demo,['build_indexes']),
     (service,['MergedClassRecord','merge_equivalent_classes','update_room_usage','schedule_across_rooms','validate_room_registry','stage_room_updates','commit_room_registry','make_room_registry','touched_regular_slots','simulate_feb_allocation']),
     (integration_demo,['demo_integration']),
@@ -123,9 +123,9 @@ def test_excel_search_uses_bridge_while_saved_notebook_flag_is_preserved():
 
 
 def test_plan_has_no_invented_registered_tests():
-    assert set(TEST_RUNNERS)=={f'T{i:02d}' for i in range(1,20)} and RUN_TESTS is True
-    assert len(run_test_plan())==19
-    assert [status for _,status,_ in run_test_plan()]==['LULUS']*19
+    assert set(TEST_RUNNERS)=={f'T{i:02d}' for i in range(1,29)} and RUN_TESTS is True
+    assert len(run_test_plan())==28
+    assert [status for _,status,_ in run_test_plan()]==['LULUS']*28
 
 
 def test_saved_benchmarks_are_verified_against_snapshot():

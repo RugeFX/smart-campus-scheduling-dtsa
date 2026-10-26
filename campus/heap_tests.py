@@ -18,7 +18,7 @@ def test_t01():
     for request in batch:
         queue.push(request)
         assert queue.validate()
-    assert [queue.pop().request_id for _ in batch] == ["U1", "U2", "P", "K1", "K2", "E"]
+    assert [queue.pop().request_id for _ in batch] == ["U2", "U1", "P", "K2", "K1", "E"]
     assert queue.validate()
 
 def test_t02():
@@ -26,8 +26,8 @@ def test_t02():
     batch = [heap_test_request("Masuk-1"), heap_test_request("Masuk-2"),
              heap_test_request("Jam-lebih-awal", start=500)]
     queue.build(batch)
-    assert queue.peek() is batch[2] and len(queue) == 3
-    assert [queue.pop().request_id for _ in batch] == ["Jam-lebih-awal", "Masuk-1", "Masuk-2"]
+    assert queue.peek() is batch[0] and len(queue) == 3
+    assert [queue.pop().request_id for _ in batch] == ["Masuk-1", "Masuk-2", "Jam-lebih-awal"]
 
 def test_t03():
     queue = MinHeapPriorityQueue()
@@ -64,7 +64,7 @@ def test_heap_aging():
             raise AssertionError("Parameter aging tidak valid seharusnya ditolak.")
     assert queue.validate()
     queue.apply_aging(180, 30)
-    assert [queue.pop().request_id for _ in range(len(queue))] == ["Baru", "Event-lama", "Ujian-baru"]
+    assert [queue.pop().request_id for _ in range(len(queue))] == ["Event-lama", "Ujian-baru", "Baru"]
 
 def test_heap_random():
     rng = Random(42)
@@ -73,7 +73,7 @@ def test_heap_random():
     counter = 0
     for i in range(1000):
         if reference and rng.random() < 0.45:
-            reference.sort(key=lambda item: (item[0].priority, item[0].start, item[1]))
+            reference.sort(key=lambda item: (item[0].priority, item[1]))
             expected, _ = reference.pop(0)
             assert queue.peek() is expected
             assert queue.pop() is expected
@@ -84,7 +84,7 @@ def test_heap_random():
             reference.append((request, counter))
             counter += 1
         assert queue.validate()
-    expected = [r for r, c in sorted(reference, key=lambda item: (item[0].priority, item[0].start, item[1]))]
+    expected = [r for r, c in sorted(reference, key=lambda item: (item[0].priority, item[1]))]
     before = (list(queue.entries), queue.comparisons, queue.next_counter)
     assert [entry[1] for entry in queue.ordered_entries()] == expected
     assert (queue.entries, queue.comparisons, queue.next_counter) == before
@@ -93,7 +93,7 @@ def test_heap_random():
     batch = [heap_test_request(f"B-{i}", rng.choice(list(PRIORITY)), rng.randrange(435, 900)) for i in range(1000)]
     queue.build(batch)
     assert queue.validate() and queue.comparisons <= 2 * len(batch)
-    expected = sorted(enumerate(batch), key=lambda item: (item[1].priority, item[1].start, item[0]))
+    expected = sorted(enumerate(batch), key=lambda item: (item[1].priority, item[0]))
     assert [queue.pop() for _ in batch] == [r for _, r in expected]
 
 def test_heap_invalid():

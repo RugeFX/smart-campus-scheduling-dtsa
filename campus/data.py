@@ -33,9 +33,18 @@ def load_workbook(source, source_name="dataset_jadwal_uts_feb_uph.xlsx"):
             "source_name": source_name, "sha256": hashlib.sha256(content).hexdigest()}
 
 
-def build_search_indexes(ingredients):
+def build_search_indexes(ingredients, strategy="chaining"):
     # The user explicitly selected Excel for all app data. Reuse the implemented
     # Colab bridge; keep the saved notebook flag and algorithm definitions intact.
     indexes = hubungkan_pencarian_feb(ingredients)
-    return {"classes": indexes["kelas"], "courses": indexes["mata_kuliah"],
-            "names": indexes["nama"], "codes": indexes["kode"]}
+    result = {"classes": indexes["kelas"], "courses": indexes["mata_kuliah"],
+              "names": indexes["nama"], "codes": indexes["kode"]}
+    if strategy not in ("chaining", "linear"):
+        raise ValueError("Strategi indeks tidak dikenal.")
+    if strategy == "linear":
+        from .hash_table import HashTableLinearProbing
+        for kind in ("classes", "courses"):
+            table = HashTableLinearProbing()
+            for key, value in result[kind].items(): table.put(key, value)
+            result[kind] = table
+    return result

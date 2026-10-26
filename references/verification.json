@@ -1,0 +1,171 @@
+{
+  "verified_at_utc": "2026-10-26T15:21:11.950037+00:00",
+  "code_cells": 21,
+  "test_report": [
+    [
+      "T01",
+      "LULUS",
+      ""
+    ],
+    [
+      "T02",
+      "LULUS",
+      ""
+    ],
+    [
+      "T03",
+      "LULUS",
+      ""
+    ],
+    [
+      "T04",
+      "LULUS",
+      ""
+    ],
+    [
+      "T05",
+      "LULUS",
+      ""
+    ],
+    [
+      "T06",
+      "LULUS",
+      ""
+    ],
+    [
+      "T07",
+      "LULUS",
+      ""
+    ],
+    [
+      "T08",
+      "LULUS",
+      ""
+    ],
+    [
+      "T09",
+      "LULUS",
+      ""
+    ],
+    [
+      "T10",
+      "LULUS",
+      ""
+    ],
+    [
+      "T11",
+      "LULUS",
+      ""
+    ],
+    [
+      "T12",
+      "LULUS",
+      ""
+    ],
+    [
+      "T13",
+      "LULUS",
+      ""
+    ],
+    [
+      "T14",
+      "LULUS",
+      ""
+    ],
+    [
+      "T15",
+      "LULUS",
+      ""
+    ],
+    [
+      "T16",
+      "LULUS",
+      ""
+    ],
+    [
+      "T17",
+      "LULUS",
+      ""
+    ],
+    [
+      "T18",
+      "LULUS",
+      ""
+    ],
+    [
+      "T19",
+      "LULUS",
+      ""
+    ],
+    [
+      "T20",
+      "LULUS",
+      ""
+    ],
+    [
+      "T21",
+      "LULUS",
+      ""
+    ],
+    [
+      "T22",
+      "LULUS",
+      ""
+    ],
+    [
+      "T23",
+      "LULUS",
+      ""
+    ],
+    [
+      "T24",
+      "LULUS",
+      ""
+    ],
+    [
+      "T25",
+      "LULUS",
+      ""
+    ],
+    [
+      "T26",
+      "LULUS",
+      ""
+    ],
+    [
+      "T27",
+      "LULUS",
+      ""
+    ],
+    [
+      "T28",
+      "LULUS",
+      ""
+    ]
+  ],
+  "benchmark_records": 79,
+  "environment": {
+    "timestamp_utc": "2026-10-26T15:20:06.178440+00:00",
+    "python": "3.12.14",
+    "system": "Darwin",
+    "release": "27.0.0",
+    "architecture": "arm64",
+    "seed": 42,
+    "repeat": 5,
+    "warmup_runs": 1,
+    "source": "synthetic; not FEB Excel",
+    "sizes": [
+      240,
+      1000,
+      10000,
+      100000
+    ],
+    "input_fingerprint": "6c42894f9ff7c1a19c57799bbc0ce62b933be86ae4787ab1bc18a07adbdc5c7b",
+    "memory_scope": "extra Python allocations during action; setup and native allocations excluded"
+  },
+  "feb": {
+    "accepted": 189,
+    "rejected": 7,
+    "excluded": 47
+  }
+}

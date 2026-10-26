@@ -1,3 +1,4 @@
+from .learning_ui import dispatch_example
 """A simple queue workflow with technical controls disclosed on demand."""
 from dataclasses import replace
 import json
@@ -26,7 +27,7 @@ def render_queue(data, minute_text, request_frame, handoff):
     signature = (data["sha256"], SNAPSHOT_HASH, day)
     if st.session_state.get("queue_signature") != signature:
         st.session_state.queue_signature = signature
-        st.session_state.queue = MinHeapPriorityQueue()
+        st.session_state.queue = MinHeapPriorityQueue(trace=True)
         st.session_state.queue_processed = []
         st.session_state.queue_last_clock = 0
         st.session_state.queue_clock = 0
@@ -112,7 +113,7 @@ def render_queue(data, minute_text, request_frame, handoff):
     with waiting:
         if ordered:
             st.dataframe(pd.DataFrame(simple_rows), hide_index=True, width="stretch")
-            st.caption("Jam mulai lebih awal didahulukan. Jika jam sama, kelas yang masuk lebih dahulu diproses lebih dulu.")
+            st.caption("Pada prioritas yang sama, kelas yang masuk lebih dahulu diproses lebih dulu. Jam mulai ujian tidak mengubah urutan masuk.")
             st.download_button("Unduh antrean CSV",pd.DataFrame(simple_rows).to_csv(index=False).encode("utf-8-sig"),"antrean_excel.csv","text/csv")
         else:
             st.caption("Kelas yang ditambahkan akan muncul di sini sesuai urutan penanganannya.")
@@ -127,22 +128,32 @@ def render_queue(data, minute_text, request_frame, handoff):
             st.session_state.queue_saved_clock = clock
             st.caption("Opsional untuk demonstrasi waktu tunggu. Dimulai dari 0 dan berbeda dari jam ujian pada Excel.")
             step = int(st.number_input("Interval aging T (menit)",min_value=1,value=30,step=1,key="queue_aging_step"))
-            st.caption("Aging menaikkan prioritas setelah menunggu. Semua ujian FEB sudah berprioritas 1, sehingga pengaturan ini tidak mengubah urutannya. Angka 30 menit merupakan pengaturan simulasi.")
+            st.caption("Aging menaikkan prioritas setelah menunggu. Ujian FEB bermula pada prioritas 1; tanpa prioritas khusus, urutannya tetap FIFO. Angka 30 menit merupakan pengaturan simulasi.")
             if queue.aging_step is not None: st.caption(f"Aging aktif: setiap {queue.aging_step} menit; terakhir dihitung pada menit {queue.now}.")
             if st.button("Terapkan peningkatan prioritas", disabled=not queue):
                 try:
                     if clock < st.session_state.queue_last_clock: raise ValueError("Waktu simulasi tidak boleh mundur.")
                     queue.apply_aging(clock,step)
                     st.session_state.queue_last_clock = clock
-                    notify("Pengaturan prioritas diterapkan. Seluruh ujian tetap berprioritas 1.")
+                    notify("Prioritas efektif dihitung ulang sesuai waktu tunggu dan prioritas simulasi.")
                 except ValueError as error: st.error(str(error))
+            st.write("**Prioritas khusus dalam simulasi**")
+            current_ids=[r.request_id for _,r,_ in queue.entries]
+            chosen=st.selectbox("Kelas dalam antrean",current_ids,index=None,key="queue_priority_id",disabled=not current_ids)
+            priority=st.selectbox("Prioritas penanganan",[1,2,3,4],key="queue_override_priority")
+            st.caption("Perubahan hanya untuk urutan penanganan dalam simulasi; kategori dan jadwal Excel tidak diubah. Jika aging aktif, prioritas efektif dihitung dari nilai ini.")
+            if st.button("Ubah prioritas kelas",disabled=chosen is None):
+                try:
+                    advance_clock();queue.change_priority(chosen,priority)
+                    notify("Prioritas simulasi diperbarui. Urutan masuk kelas tetap dipertahankan.")
+                except (ValueError,KeyError) as error:st.error(str(error))
             if st.button("Mulai ulang antrean", disabled=not queue and not processed,
                          help="Mengosongkan antrean dan riwayat pada tanggal ini."):
                 st.session_state.pop("queue_signature",None)
                 st.rerun()
         with algorithm:
             st.write("**Heap & Priority Queue · Ikin & Deni**")
-            st.write("Key: (prioritas efektif, jam mulai, counter masuk). Push melakukan sift-up; pop mengganti akar dan melakukan sift-down. Hash tim melacak posisi ID. FIFO berlaku saat prioritas dan jam sama.")
+            st.write("Key: (prioritas efektif, counter FIFO). Push melakukan sift-up; pop mengganti akar dan melakukan sift-down. Hash tim melacak posisi ID. FIFO berlaku pada prioritas yang sama.")
             st.caption("Push/pop O(log n), peek O(1), build dan aging O(n). Pratinjau menguras salinan O(n log n), sehingga antrean asli tetap utuh.")
             queue.validate()
             st.caption(f"Heap dan Hash posisi valid · {queue.comparisons} perbandingan key pada operasi antrean.")
@@ -154,6 +165,10 @@ def render_queue(data, minute_text, request_frame, handoff):
                 edges=[f'n{(i-1)//2} -> n{i};' for i in range(1,min(15,len(queue)))]
                 st.graphviz_chart("digraph Heap { node [shape=box]; "+" ".join(nodes+edges)+"}")
                 if len(queue)>15: st.caption("Diagram menampilkan 15 simpul pertama. Tabel memuat seluruh antrean.")
+            with st.expander("Trace operasi Heap"):
+                st.dataframe(pd.DataFrame(queue.trace),hide_index=True,width="stretch")
+                st.caption("Trace dibatasi 200 event; cuplikan array maksimal 15 simpul. Data antrean tetap lengkap.")
+            dispatch_example()
         with source:
             st.caption(f"Sumber: {data['source_name']}. Semua kelas, termasuk LAB dan online, mengikuti baris Excel. Seluruhnya kategori ujian dengan prioritas 1 dan bobot 10.")
             st.caption("Antrean dipisahkan per tanggal. Mengganti tanggal atau workbook memulai antrean baru.")

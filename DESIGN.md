@@ -32,3 +32,6 @@ Kontrol native Streamlit, fokus keyboard jelas, label selalu tersedia, tabel dap
 Sidebar memakai tombol navigasi selebar kolom dengan ikon Material, teks rata kiri, area klik minimal 44px, dan latar berwarna pada halaman aktif. Pilihan isi/form tetap memakai kontrol sesuai kebutuhannya.
 
 Halaman antrean menampilkan pemilihan kelas dan kelas berikutnya sebagai fokus utama. Daftar menunggu dan riwayat memakai tab. Jam simulasi, aging, counter, pohon Heap dan data sumber tersedia dalam satu panel lanjutan yang tertutup saat awal.
+
+
+Peningkatan UAS: tujuan jumlah kelas (Greedy) dan total nilai (DP) dijelaskan dengan bahasa pengguna. Pilihan implementasi, trace, contoh uji dan pengaturan indeks berada di expander; kandidat operasional tetap Excel. Empat visual AVL menampilkan before/after dari log aktual.

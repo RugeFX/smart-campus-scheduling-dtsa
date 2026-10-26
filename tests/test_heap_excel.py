@@ -19,7 +19,7 @@ def test_all_excel_rows_ordered_per_day_with_source_fifo():
         batch=[r for r in requests if r.day==day]
         queue=MinHeapPriorityQueue()
         queue.build(batch)
-        expected=[r for i,r in sorted(enumerate(batch),key=lambda x:(x[1].start,x[0]))]
+        expected=list(batch)
         queue.apply_aging(100,30)
         for request in expected:
             assert queue.peek() is request

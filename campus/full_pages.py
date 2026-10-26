@@ -144,12 +144,12 @@ def experiments_page(data):
     with live:
         st.caption(f"Sumber input: {data['source_name']}. Tidak ada kegiatan buatan yang ditambahkan ke data aplikasi.")
         st.dataframe(pd.DataFrame([{"Tabel":name,"Baris Excel":len(frame)} for name,frame in data["raw"].items()]), hide_index=True, width="stretch")
-        algorithm = st.selectbox("Algoritma", ["Hash Table","Heap/PQ","Trie","AVL","DP"], key="benchmark_algorithm")
+        algorithm = st.selectbox("Algoritma", ["Hash Table","Heap/PQ","Trie","AVL","DP","Greedy"], key="benchmark_algorithm")
         upper = max(1,len(data["display"]))
         limit = st.slider("Batas jumlah baris masukan", 1, upper, min(100,upper), key="benchmark_limit") if upper>1 else 1
         repeat = st.selectbox("Pengulangan pengukuran", [5,3,1], key="benchmark_repeat")
         query = st.text_input("Awalan nama untuk Trie", value="akun", key="benchmark_prefix") if algorithm=="Trie" else "akun"
-        st.caption("Jumlah aktual mengikuti data tiap algoritma. Heap memakai satu tanggal; DP memakai satu ruang/hari, maksimal 15 kandidat untuk pembanding semua kombinasi. Setup tidak masuk timer. Memori adalah tambahan selama operasi, bukan seluruh RAM.")
+        st.caption("Jumlah aktual mengikuti data tiap algoritma. Heap memakai satu tanggal; DP dan Greedy memakai satu ruang/hari, maksimal 15 kandidat untuk pembanding semua kombinasi. Setup tidak masuk timer. Memori adalah tambahan selama operasi, bukan seluruh RAM.")
         if st.button("Jalankan percobaan", type="primary"):
             try:
                 with st.spinner("Mengukur operasi pada data Excel…"):
@@ -183,6 +183,12 @@ def experiments_page(data):
             tooltip=["n","k","implementation","median_seconds","peak_bytes"])
         st.altair_chart(chart, width="stretch")
         st.download_button("Unduh arsip benchmark CSV",(ROOT/"data/colab_benchmarks.csv").read_bytes(),"benchmark_colab.csv","text/csv")
+        with st.expander("Eksperimen tambahan UAS"):
+            extra=pd.read_csv(ROOT/"data/uas_selected_benchmarks.csv")
+            st.caption(f"{len(extra)} hasil terukur: FIFO/PQ, Hash load factor, tiga metode DP, dan dua strategi Greedy. Input terkontrol untuk eksperimen.")
+            module=st.selectbox("Eksperimen tambahan",list(extra["module"].unique()),key="uas_benchmark_module")
+            st.dataframe(extra[extra["module"].eq(module)],hide_index=True,width="stretch")
+            st.download_button("Unduh benchmark tambahan CSV",extra.to_csv(index=False).encode("utf-8-sig"),"benchmark_uas.csv","text/csv")
         with st.expander("Lingkungan dan metode pengukuran"):
             st.json(environment)
             st.caption("Input, operasi, ukuran, k, seed, dan pengulangan harus sama untuk perbandingan setara. DP skala besar dipisahkan dari pembanding kecil.")

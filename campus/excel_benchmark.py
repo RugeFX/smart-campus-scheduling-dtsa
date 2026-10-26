@@ -3,7 +3,8 @@ from .data import build_search_indexes
 from .experiments import measure_operation, measure_peak_memory
 from .feb_views import queue_inputs, room_inputs, available_weeks, scheduling_inputs
 from .heap import MinHeapPriorityQueue
-from .hash_table import HashTableChaining
+from .hash_table import HashTableChaining, HashTableLinearProbing
+from .greedy import select_activities, brute_force_activity_count
 from .trie import Trie
 from .avl import AVLTree
 from .dp import optimize_schedule, brute_force_reference
@@ -22,13 +23,15 @@ def measure_excel(data, algorithm, limit=243, repeat=5, query="akun"):
         pairs = data["ingredients"]["kelas"][:limit]
         if not pairs: raise ValueError("Tidak ada kelas Excel untuk percobaan.")
         queries = [key for key, _ in pairs]
-        def setup():
-            table = HashTableChaining()
+        def setup(table_type=HashTableChaining):
+            table = table_type()
             for key, value in pairs: table.put(key, value)
             table.probes = 0
             return table
         record("Cari semua kode kelas", "Hash chaining", len(pairs), len(queries), setup,
             lambda t: [t.get(key) for key in queries], lambda t, value: {"probes": t.probes})
+        record("Cari semua kode kelas", "Hash linear probing", len(pairs), len(queries), lambda:setup(HashTableLinearProbing),
+            lambda t: [t.get(key) for key in queries], lambda t, value: {"probes":t.probes})
         record("Cari semua kode kelas", "Pencarian linear", len(pairs), len(queries), lambda: pairs,
             lambda values: [next((v for k, v in values if k == key), None) for key in queries])
     elif algorithm == "Trie":
@@ -57,7 +60,7 @@ def measure_excel(data, algorithm, limit=243, repeat=5, query="akun"):
         record("Bangun lalu ambil seluruh antrean", "Heap", len(batch), len(batch), MinHeapPriorityQueue, build,
             lambda t, result: {"comparisons": t.comparisons})
         def sorted_list(values):
-            values.extend(sorted(enumerate(batch), key=lambda x: (x[1].priority, x[1].start, x[0])))
+            values.extend(sorted(enumerate(batch), key=lambda x: (x[1].priority, x[0])))
             while values: values.pop(0)
         record("Bangun lalu ambil seluruh antrean", "List terurut", len(batch), len(batch), list, sorted_list)
     elif algorithm == "AVL":
@@ -73,12 +76,18 @@ def measure_excel(data, algorithm, limit=243, repeat=5, query="akun"):
         record("Ranking pemakaian", "AVL", len(rooms), k, setup, lambda tree: tree.top_k_utilization(k))
         record("Ranking pemakaian", "List + sort", len(rooms), k, lambda: rooms,
             lambda values: sorted(values, key=lambda r: (r.utilization, r.room_id), reverse=True)[:k])
-    elif algorithm == "DP":
+    elif algorithm in ("DP", "Greedy"):
         candidates, _ = scheduling_inputs(data)
         if not candidates: raise ValueError("Tidak ada kandidat Excel untuk DP.")
         groups = {}
         for request in candidates: groups.setdefault((request.room_id, request.day), []).append(request)
         batch = max(groups.values(), key=len)[:min(limit, 15)]
+        if algorithm == "Greedy":
+            assert select_activities(batch)[0] == brute_force_activity_count(batch)[0]
+            record("Jumlah kelas satu ruang/hari", "Selesai tercepat", len(batch), None, lambda: batch, select_activities)
+            record("Jumlah kelas satu ruang/hari", "Mulai tercepat", len(batch), None, lambda: batch, lambda items: select_activities(items,"earliest_start"))
+            record("Jumlah kelas satu ruang/hari", "Semua kombinasi", len(batch), None, lambda: batch, brute_force_activity_count)
+            return results
         assert optimize_schedule(batch)[0] == brute_force_reference(batch)[0]
         record("Kombinasi satu ruang/hari", "DP", len(batch), None, lambda: batch, optimize_schedule)
         record("Kombinasi satu ruang/hari", "Semua kombinasi", len(batch), None, lambda: batch, brute_force_reference)

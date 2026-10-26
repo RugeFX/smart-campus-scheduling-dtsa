@@ -1,6 +1,7 @@
 # Generated from the saved Colab snapshot. Do not fill notebook TODOs here.
 from .models import *
 from .generators import generate_requests
+from .sorting import manual_merge_sort
 
 def validate_candidates(candidates):
     if len({r.request_id for r in candidates}) != len(candidates):
@@ -30,7 +31,7 @@ def optimize_schedule(candidates):
         return 0, []
 
     # 1) Urutkan berdasarkan selesai, lalu mulai, lalu ID agar hasil konsisten.
-    ordered = sorted(candidates, key=lambda r: (r.end, r.start, r.request_id))
+    ordered = manual_merge_sort(candidates, key=lambda r: (r.end, r.start, r.request_id))
     n = len(ordered)
 
     # 2) Hitung p(j) untuk j = 1..n dengan binary search. p[0] tidak dipakai.
@@ -71,7 +72,7 @@ def optimize_schedule_memo(candidates):
     validate_candidates(candidates)
     if not candidates:
         return 0, [], 0
-    ordered = sorted(candidates, key=lambda r: (r.end, r.start, r.request_id))
+    ordered = manual_merge_sort(candidates, key=lambda r: (r.end, r.start, r.request_id))
     n = len(ordered)
     p = [0] * (n + 1)
     for j in range(1, n + 1):
@@ -106,7 +107,7 @@ def optimize_schedule_memo(candidates):
 def explain_dp_table(candidates):
     """Cetak tabel j, kegiatan, waktu, nilai, p(j), DP[j] seperti markdown slide 15."""
     validate_candidates(candidates)
-    ordered = sorted(candidates, key=lambda r: (r.end, r.start, r.request_id))
+    ordered = manual_merge_sort(candidates, key=lambda r: (r.end, r.start, r.request_id))
     n = len(ordered)
     p = [0] + [find_previous_compatible(ordered, j) for j in range(1, n + 1)]
     dp = [0] * (n + 1)

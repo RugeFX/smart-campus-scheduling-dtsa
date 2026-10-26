@@ -51,7 +51,7 @@ def test_queue_uses_excel_and_preserves_peek_pop_state():
     button(at,'Tambahkan semua kelas').click().run()
     queue=at.session_state['queue']
     assert len(queue)==len(batch) and queue.validate()
-    expected=[r for i,r in sorted(enumerate(batch),key=lambda x:(x[1].priority,x[1].start,x[0]))]
+    expected=[r for i,r in sorted(enumerate(batch),key=lambda x:(x[1].priority,x[0]))]
     assert queue.peek().request_id==expected[0].request_id
     assert button(at,'Tambahkan semua kelas').disabled
     before=queue.comparisons
@@ -67,7 +67,7 @@ def test_queue_uses_excel_and_preserves_peek_pop_state():
     assert not at.exception
     at.button(key='nav_'+'Ruangan').click().run()
     assert not button(at,'Kelola alokasi dan pembatalan').disabled and not at.exception
-    assert set(at.dataframe[-1].value['Kapasitas asumsi'])!={30,40,45,60,80,100}
+    assert set(next(df.value for df in at.dataframe if 'Kapasitas asumsi' in df.value.columns and len(df.value)==16)['Kapasitas asumsi'])!={30,40,45,60,80,100}
 
 
 def test_queue_clock_validation_day_reset_and_no_duplicate():
@@ -138,10 +138,10 @@ def test_experiments_use_excel_counts_and_full_registered_tests():
     assert at.dataframe[0].value['Baris Excel'].tolist()==[243,122,61,16]
     at.button(key='nav_'+'Data & panduan').click().run()
     plan=next(df.value for df in at.dataframe if list(df.value.columns)==['ID','Status','Detail'])
-    assert plan['Status'].tolist()==['TERDAFTAR']*19
-    button(at,'Jalankan 19 pengujian Colab').click().run()
+    assert plan['Status'].tolist()==['TERDAFTAR']*28
+    button(at,'Jalankan 28 pengujian Colab').click().run()
     plan=next(df.value for df in at.dataframe if list(df.value.columns)==['ID','Status','Detail'])
-    assert plan['Status'].tolist()==['LULUS']*19
+    assert plan['Status'].tolist()==['LULUS']*28
     assert not any('acak' in b.label or 'contoh' in b.label for b in at.button)
 
 
@@ -167,7 +167,7 @@ def test_legacy_state_is_discarded_and_new_workbook_changes_all_views():
     at.text_input(key='search_query').set_value('ACC93105').run()
     assert set(at.dataframe[0].value['Mata kuliah'])=={'Nama pada Excel Baru'}
     at.button(key='nav_'+'Ruangan').click().run()
-    frame=at.dataframe[-1].value
+    frame=next(df.value for df in at.dataframe if 'Kapasitas asumsi' in df.value.columns and len(df.value)==16)
     assert frame.loc[frame['Ruang'].eq('F705'),'Kapasitas asumsi'].iloc[0]==99
     at.button(key='nav_'+'Pilih jadwal').click().run()
     assert not at.exception

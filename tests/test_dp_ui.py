@@ -44,8 +44,12 @@ def test_page_does_not_measure_until_explicit_click(monkeypatch):
     assert not at.exception and calls==[1]
 
 
-def test_imported_benchmark_does_not_claim_old_environment():
+def test_benchmark_environment_matches_verified_run():
     metadata=json.loads((ROOT/'data/colab_benchmark_environment.json').read_text())
-    assert metadata['environment_status']=='unavailable_for_imported_run'
-    assert metadata['timestamp_utc'] is None and metadata['system'] is None
+    verification=json.loads((ROOT/'references/verification.json').read_text())
+    assert metadata['environment_status']=='verified_local_run'
+    for key in ('timestamp_utc','system','python','input_fingerprint'):
+        assert metadata[key]==verification['environment'][key]
     assert metadata['records']==79 and metadata['repeat']==5
+    assert metadata['additional_records']==43 and metadata['warmup_runs']==1
+    assert (ROOT/'references/legacy-benchmark-environment.json').exists()

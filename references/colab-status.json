@@ -1,6 +1,6 @@
 {
-  "sha256": "1375df3fccdd730bea8df18ad9409e45d8863fd6fd8fa91a44a9a1a16d8a15b3",
-  "modified_time": "2026-10-25T13:27:10.361Z",
+  "sha256": "e49cb2371c7b184ea4b13a0ef5d41b55a3f75c5bc0f45be9217c163269886d0e",
+  "modified_time": "2026-10-26T15:22:31.915Z",
   "operations": {
     "HashTableChaining.__init__": {
       "implemented": true,
@@ -50,6 +50,54 @@
       "implemented": true,
       "cell": 23
     },
+    "HashTableLinearProbing.__init__": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableLinearProbing._hash": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableLinearProbing._check_key": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableLinearProbing._locate": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableLinearProbing.put": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableLinearProbing.get": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableLinearProbing.contains": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableLinearProbing.delete": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableLinearProbing._rehash": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableLinearProbing.items": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableLinearProbing.validate": {
+      "implemented": true,
+      "cell": 23
+    },
+    "HashTableLinearProbing.__len__": {
+      "implemented": true,
+      "cell": 23
+    },
     "MinHeapPriorityQueue.__init__": {
       "implemented": true,
       "cell": 21
@@ -59,6 +107,10 @@
       "cell": 21
     },
     "MinHeapPriorityQueue._key": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue._record": {
       "implemented": true,
       "cell": 21
     },
@@ -78,6 +130,10 @@
       "implemented": true,
       "cell": 21
     },
+    "MinHeapPriorityQueue._repair": {
+      "implemented": true,
+      "cell": 21
+    },
     "MinHeapPriorityQueue._heapify": {
       "implemented": true,
       "cell": 21
@@ -90,11 +146,19 @@
       "implemented": true,
       "cell": 21
     },
+    "MinHeapPriorityQueue.remove": {
+      "implemented": true,
+      "cell": 21
+    },
     "MinHeapPriorityQueue.pop": {
       "implemented": true,
       "cell": 21
     },
     "MinHeapPriorityQueue.peek": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MinHeapPriorityQueue.change_priority": {
       "implemented": true,
       "cell": 21
     },
@@ -110,7 +174,67 @@
       "implemented": true,
       "cell": 21
     },
+    "MinHeapPriorityQueue.is_heap": {
+      "implemented": true,
+      "cell": 21
+    },
     "MinHeapPriorityQueue.__len__": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap.__init__": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap._greater": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap._swap": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap._up": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap._down": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap.build": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap.push": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap.peek": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap.delete": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap.pop": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap.change_key": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap.validate": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap.is_heap": {
+      "implemented": true,
+      "cell": 21
+    },
+    "MaxHeap.__len__": {
       "implemented": true,
       "cell": 21
     },
@@ -134,6 +258,14 @@
       "implemented": true,
       "cell": 28
     },
+    "Trie.delete": {
+      "implemented": true,
+      "cell": 28
+    },
+    "Trie.count_nodes": {
+      "implemented": true,
+      "cell": 28
+    },
     "AVLTree.__init__": {
       "implemented": true,
       "cell": 32
@@ -150,11 +282,19 @@
       "implemented": true,
       "cell": 32
     },
+    "AVLTree.snapshot": {
+      "implemented": true,
+      "cell": 32
+    },
     "AVLTree.rotate_right": {
       "implemented": true,
       "cell": 32
     },
     "AVLTree.rotate_left": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree._rebalance": {
       "implemented": true,
       "cell": 32
     },
@@ -166,27 +306,11 @@
       "implemented": true,
       "cell": 32
     },
+    "AVLTree.search": {
+      "implemented": true,
+      "cell": 32
+    },
     "AVLTree.in_order_traversal": {
-      "implemented": true,
-      "cell": 32
-    },
-    "AVLTree._in_order": {
-      "implemented": true,
-      "cell": 32
-    },
-    "AVLTree.find_suitable_room": {
-      "implemented": true,
-      "cell": 32
-    },
-    "AVLTree.check_balance": {
-      "implemented": true,
-      "cell": 32
-    },
-    "AVLTree._check_balance": {
-      "implemented": true,
-      "cell": 32
-    },
-    "AVLTree.delete": {
       "implemented": true,
       "cell": 32
     },
@@ -194,7 +318,15 @@
       "implemented": true,
       "cell": 32
     },
+    "AVLTree.find_suitable_room": {
+      "implemented": true,
+      "cell": 32
+    },
     "AVLTree.ceiling_capacity": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.delete": {
       "implemented": true,
       "cell": 32
     },
@@ -205,6 +337,26 @@
     "AVLTree.validate": {
       "implemented": true,
       "cell": 32
+    },
+    "AVLTree.check_avl": {
+      "implemented": true,
+      "cell": 32
+    },
+    "AVLTree.check_balance": {
+      "implemented": true,
+      "cell": 32
+    },
+    "select_activities": {
+      "implemented": true,
+      "cell": 34
+    },
+    "heap_sort": {
+      "implemented": true,
+      "cell": 21
+    },
+    "manual_merge_sort": {
+      "implemented": true,
+      "cell": 3
     },
     "optimize_schedule": {
       "implemented": true,
@@ -260,6 +412,15 @@
     "T16",
     "T17",
     "T18",
-    "T19"
+    "T19",
+    "T20",
+    "T21",
+    "T22",
+    "T23",
+    "T24",
+    "T25",
+    "T26",
+    "T27",
+    "T28"
   ]
 }

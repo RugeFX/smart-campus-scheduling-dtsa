@@ -60,17 +60,42 @@ class Trie:
                 return []
             current = current.children.get(char)
 
-        results = []
-        def dfs(node):
+        results, seen, stack = [], HashTableChaining(), [current]
+        while stack:
+            node = stack.pop()
             if node.is_end:
                 for entry_id in node.entry_ids:
-                    if entry_id not in results:
-                        results.append(entry_id)
-            for _, child_node in node.children.items():
-                dfs(child_node)
-
-        dfs(current)
+                    marker = str(entry_id)
+                    if not seen.contains(marker):
+                        seen.put(marker, True); results.append(entry_id)
+            children = list(node.children.items())
+            for _, child_node in reversed(children): stack.append(child_node)
         return results
+
+    def delete(self, text, entry_id=None):
+        """Hapus satu ID, atau seluruh kata bila entry_id=None; prefix lain tetap."""
+        if not isinstance(text, str): return False
+        current, path = self.root, []
+        for char in text.strip().casefold():
+            child = current.children.get(char)
+            if child is None: return False
+            path.append((current, char, child)); current = child
+        if not current.is_end: return False
+        if entry_id is None: current.entry_ids.clear()
+        elif entry_id in current.entry_ids: current.entry_ids.remove(entry_id)
+        else: return False
+        current.is_end = bool(current.entry_ids)
+        for parent, char, child in reversed(path):
+            if child.is_end or len(child.children): break
+            parent.children.delete(char)
+        return True
+
+    def count_nodes(self):
+        count, stack = 0, [self.root]
+        while stack:
+            node = stack.pop(); count += 1
+            stack.extend(child for _, child in node.children.items())
+        return count
 
 def bilingual_autocomplete(trie, prefix, equivalence_table, course_table):
     # 1. Dapatkan hasil autocomplete langsung dari trie

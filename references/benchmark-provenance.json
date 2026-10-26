@@ -1,5 +1,8 @@
 {
-  "notebook_sha256": "1375df3fccdd730bea8df18ad9409e45d8863fd6fd8fa91a44a9a1a16d8a15b3",
-  "source": "Colab saved measurement (Run all 25-10-2026); synthetic inputs",
-  "records": 79
+  "notebook_sha256": "e49cb2371c7b184ea4b13a0ef5d41b55a3f75c5bc0f45be9217c163269886d0e",
+  "source": "Executed saved notebook locally on 26-10-2026; synthetic benchmark fixtures, not application schedule",
+  "records": 79,
+  "additional_records": 43,
+  "benchmark_sha256": "2a341d0a602ab55d447db32ff3b89fb979dbd090781088b05937f7813c2d18e4",
+  "additional_sha256": "524df67fd79031733dbb0a92886d8adbdc18db8ce9656594d03d4e33b923207f"
 }
