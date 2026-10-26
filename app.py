@@ -3,7 +3,6 @@ from io import BytesIO, StringIO
 from contextlib import redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
-from time import perf_counter
 import json
 import altair as alt
 import pandas as pd
@@ -15,6 +14,7 @@ from campus.trie import bilingual_autocomplete
 from campus.search_pairs import pair_indexes, expand_course_ids
 from campus.adapters import RoomView
 from campus.dp import optimize_schedule, optimize_schedule_memo, naive_recursive, earliest_finish_reference, explain_dp_table, brute_force_reference
+from campus.dp_ui import compare_schedule_methods, MEMO_UI_LIMIT
 from campus.models import VALUE
 from campus.capabilities import SOURCE_LABEL, SNAPSHOT_HASH, status_rows, STATUS
 from campus.workspace import AllocationWorkspace, week_of
@@ -304,10 +304,18 @@ def schedule_page(data):
     groups=sorted({(r.room_id,r.day) for r in candidates})
     group=st.selectbox("Ruang dan hari yang dievaluasi",groups,format_func=lambda g:f"{g[0]} · {g[1]}",key="dp_group")
     batch=[r for r in candidates if (r.room_id,r.day)==group]
-    method=st.radio("Metode DP",("Tabulation (bottom-up)","Memoization (top-down)"),horizontal=True,key="dp_method")
+    methods=("Tabulation (bottom-up)","Memoization (top-down)") if len(batch)<=MEMO_UI_LIMIT else ("Tabulation (bottom-up)",)
+    if st.session_state.get("dp_method") not in methods: st.session_state.pop("dp_method",None)
+    method=st.radio("Metode DP",methods,horizontal=True,key="dp_method")
+    if len(batch)>MEMO_UI_LIMIT: st.caption(f"Memoization rekursif dibatasi {MEMO_UI_LIMIT} kandidat. Tabulasi tetap dapat digunakan.")
     if method.startswith("Memoization"):
-        total,selected,method_calls=optimize_schedule_memo(batch)
-        calls_note=f"{method_calls} pemanggilan OPT (top-down)"
+        try:
+            total,selected,method_calls=optimize_schedule_memo(batch)
+            calls_note=f"{method_calls} pemanggilan OPT (top-down)"
+        except RecursionError:
+            total,selected=optimize_schedule(batch)
+            calls_note="Batas rekursi tercapai; hasil memakai tabulasi"
+            st.warning("Memoization melewati batas rekursi. Hasil tabulasi tetap tersedia.")
     else:
         total,selected=optimize_schedule(batch)
         calls_note=f"{len(batch)} sel DP diisi (bottom-up)"
@@ -331,18 +339,19 @@ def schedule_page(data):
                 else: st.error(f"Nilai berbeda: DP {total}, pembanding {value}.")
         else: st.caption("Pembanding semua kombinasi dibatasi 15 baris.")
     with st.expander("Perbandingan biaya: rekursi naif vs memoization vs tabulation"):
-        rows=[]
-        if len(batch)<=26:
-            started=perf_counter(); naive_total,naive_calls=naive_recursive(batch)
-            rows.append({"Metode":"Rekursi naif","Nilai":naive_total,"Pemanggilan OPT / sel":naive_calls,"Detik":round(perf_counter()-started,6)})
-        else: st.caption("Rekursi naif dilewati: lebih dari 26 baris (eksponensial O(2^n)).")
-        started=perf_counter(); memo_total,memo_ids,memo_calls=optimize_schedule_memo(batch)
-        rows.append({"Metode":"Memoization (top-down)","Nilai":memo_total,"Pemanggilan OPT / sel":memo_calls,"Detik":round(perf_counter()-started,6)})
-        started=perf_counter(); tab_total,tab_ids=optimize_schedule(batch)
-        rows.append({"Metode":"Tabulation (bottom-up)","Nilai":tab_total,"Pemanggilan OPT / sel":len(batch),"Detik":round(perf_counter()-started,6)})
-        if {row["Nilai"] for row in rows}!={total}: st.error("Nilai antar metode berbeda; periksa implementasi DP.")
-        st.dataframe(rows,hide_index=True,width="stretch")
-        st.caption("Pemanggilan OPT menghitung masuknya fungsi rekursif pada naif/memo; tabulation menghitung sel DP yang diisi (n). Batch Excel nyata kecil sehingga selisih waktu tipis; kurva eksponensial naif terlihat pada benchmark notebook.")
+        signature=(data["sha256"],SNAPSHOT_HASH,group,include_review)
+        if st.session_state.get("dp_compare_signature")!=signature:
+            st.session_state.pop("dp_compare_rows",None)
+            st.session_state.dp_compare_signature=signature
+        st.caption("Pengukuran hanya berjalan setelah tombol ditekan. Rekursi naif maksimal 15 kandidat; memoization rekursif maksimal 400.")
+        if st.button("Jalankan perbandingan DP",key="dp_compare"):
+            st.session_state.dp_compare_rows=compare_schedule_methods(batch)
+        rows=st.session_state.get("dp_compare_rows")
+        if rows:
+            if any(row["Nilai"]!=total for row in rows if row["Status"]=="Selesai"):
+                st.error("Nilai antar metode berbeda; periksa implementasi DP.")
+            st.dataframe(rows,hide_index=True,width="stretch")
+            st.caption("Pemanggilan OPT pada metode rekursif dan jumlah sel pada tabulasi adalah metrik berbeda. Waktu ini satu pengukuran interaktif; benchmark laporan memakai median lima pengulangan.")
     chosen=[r for r in batch if r.request_id in selected]
     st.download_button("Unduh hasil analisis CSV",request_frame(chosen).to_csv(index=False).encode("utf-8-sig"),"analisis_jadwal_excel.csv","text/csv")
     st.caption("DP belum memeriksa kapasitas, fasilitas, konflik dosen/mahasiswa, atau kegiatan wajib. Baris online tidak masuk analisis ruangan fisik.")

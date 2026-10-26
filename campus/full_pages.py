@@ -169,6 +169,9 @@ def experiments_page(data):
         frame = pd.read_csv(ROOT/"data/colab_benchmarks.csv")
         environment = json.loads((ROOT/"data/colab_benchmark_environment.json").read_text())
         st.info(f"Arsip {len(frame)} hasil dari Colab: input sintetis untuk uji performa, diukur pada Python lokal. Arsip ini tidak menjadi sumber jadwal atau alokasi Excel.")
+        metadata=json.loads((ROOT/"data/colab_benchmark_environment.json").read_text())
+        if metadata.get("environment_status")=="unavailable_for_imported_run":
+            st.info("Lingkungan mesin untuk arsip 79 hasil belum tersedia. Metadata pengukuran lama tidak digunakan untuk mengidentifikasi run ini.")
         selected = st.selectbox("Bagian eksperimen Colab", list(frame["module"].unique()), key="saved_benchmark_module")
         filtered = frame[frame["module"].eq(selected)]
         operation = st.selectbox("Operasi Colab", list(filtered["operation"].unique()), key="saved_benchmark_operation")
