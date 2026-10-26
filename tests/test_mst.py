@@ -109,6 +109,8 @@ def test_mst_ui_result_method_change_edit_stale_invalid_forest_and_reset():
     assert any('asumsi simulasi' in item.value for item in at.info)
     at.selectbox(key='mst_method').set_value('Prim').run()
     assert not at.exception
+    at.selectbox(key='mst_benchmark_scenario').set_value('dense').run()
+    assert not at.exception
     # data_editor uses the real widget protobuf state, including its edit delta.
     editor_key=f'mst_editor_{at.session_state["mst_source"][0]}_{at.session_state["mst_revision"]}'
     at.session_state[editor_key]={'edited_rows':{0:{'Biaya simulasi':50}},'added_rows':[],'deleted_rows':[]}

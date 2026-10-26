@@ -137,7 +137,13 @@ def render_mst(data):
         frame = pd.read_csv(Path(__file__).resolve().parents[1]/'data/mst_benchmarks.csv')
         with st.expander('Pengukuran sparse, dense & forest'):
             st.caption('Graf sintetis untuk menguji pertumbuhan, terpisah dari data ruang. Seed 42; 1 warm-up, 5 run, median. Setup dan validasi di luar timer; memori diukur terpisah. Pengukuran mesin lokal, bukan jaminan metode tercepat.')
-            chart = alt.Chart(frame).mark_line(point=True).encode(x=alt.X('n:Q',title='Jumlah ruang (sintetis)'),y=alt.Y('median_seconds:Q',title='Median waktu (detik)'),color='algorithm:N',column='scenario:N',tooltip=['algorithm','scenario','n','edges','median_seconds','peak_bytes'])
+            scenario = st.selectbox('Pola graf eksperimen', ['sparse','dense','forest'],
+                format_func=lambda s: {'sparse':'Jarang terhubung (sparse)','dense':'Semua pasangan terhubung (dense)','forest':'Dua jaringan terpisah (forest)'}[s],
+                key='mst_benchmark_scenario')
+            chart = alt.Chart(frame[frame.scenario.eq(scenario)]).mark_line(point=True).encode(
+                x=alt.X('n:Q',title='Jumlah ruang (sintetis)'), y=alt.Y('median_seconds:Q',title='Median waktu (detik)'),
+                color=alt.Color('algorithm:N',title='Metode',scale=alt.Scale(domain=['Kruskal','Prim'],range=['#796000','#344F60']),legend=alt.Legend(orient='bottom')),
+                tooltip=['algorithm','scenario','n','edges','median_seconds','peak_bytes']).properties(height=260)
             st.altair_chart(chart, width='stretch')
             st.dataframe(frame.drop(columns=['run_seconds']),hide_index=True,width='stretch')
             st.download_button('Unduh pengukuran MST CSV',frame.to_csv(index=False),'mst_benchmarks.csv','text/csv',key='mst_benchmark_download')
