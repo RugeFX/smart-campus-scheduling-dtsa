@@ -24,8 +24,9 @@ def status_rows():
         {"Fitur": "AVL insert / kapasitas / ranking", "Status": "Siap" if ready("AVLTree.insert", "AVLTree.ceiling_capacity", "AVLTree.top_k_utilization") else "TODO"},
         {"Fitur": "AVL delete", "Status": "Siap" if ready("AVLTree.delete") else "TODO"},
         {"Fitur": "DP", "Status": "Siap" if ready("optimize_schedule") else "TODO"},
+        {"Fitur": "DP memoization", "Status": "Siap" if ready("optimize_schedule_memo") else "TODO"},
         {"Fitur": "Pencarian Excel FEB", "Status": "Aktif di Streamlit"},
         {"Fitur": "Booking / update / penggabungan", "Status": "Siap" if ready("schedule_across_rooms", "update_room_usage", "merge_equivalent_classes") else "TODO"},
         {"Fitur": "Benchmark algoritma", "Status": "Siap · pengukuran Excel & arsip Colab" if STATUS["benchmark_ready"] else "Belum tersedia"},
-        {"Fitur": "Rencana 18 pengujian", "Status": f"{len(STATUS['test_runners'])} fungsi terdaftar"},
+        {"Fitur": "Rencana pengujian", "Status": f"{len(STATUS['test_runners'])} fungsi terdaftar"},
     ]

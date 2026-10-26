@@ -1,0 +1,18 @@
+{
+  "timestamp_utc": "2026-10-21T13:00:39.969717+00:00",
+  "python": "3.12.14",
+  "system": "Darwin",
+  "release": "27.0.0",
+  "architecture": "arm64",
+  "seed": 42,
+  "repeat": 5,
+  "source": "synthetic; not FEB Excel",
+  "sizes": [
+    240,
+    1000,
+    10000,
+    100000
+  ],
+  "input_fingerprint": "6c42894f9ff7c1a19c57799bbc0ce62b933be86ae4787ab1bc18a07adbdc5c7b",
+  "memory_scope": "extra Python allocations during action; setup and native allocations excluded"
+}

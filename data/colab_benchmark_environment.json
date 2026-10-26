@@ -1,18 +1,27 @@
 {
-  "timestamp_utc": "2026-10-21T13:00:39.969717+00:00",
-  "python": "3.12.14",
-  "system": "Darwin",
-  "release": "27.0.0",
-  "architecture": "arm64",
+  "timestamp_utc": null,
+  "python": null,
+  "system": null,
+  "release": null,
+  "architecture": null,
   "seed": 42,
   "repeat": 5,
   "source": "synthetic; not FEB Excel",
   "sizes": [
+    8,
+    10,
+    12,
+    15,
+    20,
+    25,
     240,
     1000,
     10000,
     100000
   ],
-  "input_fingerprint": "6c42894f9ff7c1a19c57799bbc0ce62b933be86ae4787ab1bc18a07adbdc5c7b",
+  "input_fingerprint": null,
+  "environment_status": "unavailable_for_imported_run",
+  "measurement_claim": "PR #17 imports notebook Run all 25-10-2026; matching environment JSON was not included",
+  "records": 79,
   "memory_scope": "extra Python allocations during action; setup and native allocations excluded"
 }

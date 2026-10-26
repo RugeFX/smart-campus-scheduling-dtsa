@@ -138,10 +138,10 @@ def test_experiments_use_excel_counts_and_full_registered_tests():
     assert at.dataframe[0].value['Baris Excel'].tolist()==[243,122,61,16]
     at.button(key='nav_'+'Data & panduan').click().run()
     plan=next(df.value for df in at.dataframe if list(df.value.columns)==['ID','Status','Detail'])
-    assert plan['Status'].tolist()==['TERDAFTAR']*18
-    button(at,'Jalankan 18 pengujian Colab').click().run()
+    assert plan['Status'].tolist()==['TERDAFTAR']*19
+    button(at,'Jalankan 19 pengujian Colab').click().run()
     plan=next(df.value for df in at.dataframe if list(df.value.columns)==['ID','Status','Detail'])
-    assert plan['Status'].tolist()==['LULUS']*18
+    assert plan['Status'].tolist()==['LULUS']*19
     assert not any('acak' in b.label or 'contoh' in b.label for b in at.button)
 
 
